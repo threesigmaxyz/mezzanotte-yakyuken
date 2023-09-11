@@ -49,7 +49,7 @@ contract OnChainNFT is ERC721URIStorage, Ownable {
     uint256 constant MAX_STORAGE = 24_576 - 1; // 1 extra by for stop opcode
 
     constructor(bytes memory traits_, bytes[] memory images_, uint256[] memory imageWeights_)
-        ERC721("OnChainNFT", "OCNFT")
+        Ownable(msg.sender) ERC721("OnChainNFT", "OCNFT") 
     {
         traitsPointer = SSTORE2.write(traits_);
         //NOTE: NFTs cannot be upload in the constructor because constructor is unable to take calldata as an argument and splicing arrays requires a calldata array

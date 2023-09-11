@@ -48,7 +48,7 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
         ValueTrait[] yakFillColors;
     }
 
-    constructor(address zlib_) ERC721("Yakyuken", "YNFT")
+    constructor(address zlib_) ERC721("Yakyuken", "YNFT") Ownable(msg.sender)
     {
         _zlib = zlib_;
     }
