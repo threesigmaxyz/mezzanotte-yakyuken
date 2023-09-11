@@ -8,8 +8,10 @@ clean :;
 
 # Install dependencies
 install :;
-	@forge install foundry-rs/forge-std@master && \
-	forge install openzeppelin/openzeppelin-contracts@master
+	@forge install foundry-rs/forge-std@master --no-commit && \
+	forge install openzeppelin/openzeppelin-contracts@master --no-commit && \
+	forge install transmissions11/solmate@main --no-commit && \
+	forge install BlockChainCaffe/Base64.sol --no-commit
 
 # Update dependencies
 update :;
@@ -29,7 +31,11 @@ lint:
 
 # Run tests
 tests :;
-	@forge test -vvv
+	@forge test -vvv --ffi --match-contract=YakyukenTests
+
+# Run the tests no match with CI
+tests-ci :; 
+	@forge test -vvv --no-match-test "SkipCI"
 
 # Run tests with coverage
 coverage :;
@@ -52,7 +58,7 @@ anvil :;
 
 # This is the private key of account from the mnemonic from the "make anvil" command
 deploy-anvil :;
-	@forge script script/01_Deploy.s.sol:Deploy --rpc-url http://localhost:8545 --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80 --broadcast
+	@forge script script/01_Deploy.s.sol:Deploy --rpc-url http://localhost:8545 --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80 --ffi --broadcast
 
 # Deploy the contract to remote network and verify the code
 deploy-network :;
@@ -67,3 +73,6 @@ run-script :;
 
 run-script-local :;
 	@./utils/run_script_local.sh
+
+generate :;
+	@forge script script/00_Generate.s.sol:GenerateScript --ffi

@@ -1,0 +1,75 @@
+{
+    "background_colors": [
+        { "value": "black" },
+        { "value": "aquamarine" },
+        { "value": "white" },
+        { "value": "red" },
+        { "value": "blue" },
+        { "value": "yellow" },
+        { "value": "green" },
+        { "value": "pink" }
+    ],
+    "base_fill_colors": [
+        { "value": "black" },
+        { "value": "aquamarine" },
+        { "value": "white" },
+        { "value": "red" },
+        { "value": "blue" },
+        { "value": "yellow" },
+        { "value": "green" },
+        { "value": "pink" }
+    ],
+    "initial_shadow_colors": [
+        { "value": "black" },
+        { "value": "aquamarine" },
+        { "value": "white" },
+        { "value": "red" },
+        { "value": "blue" },
+        { "value": "yellow" },
+        { "value": "green" },
+        { "value": "pink" }
+    ],
+    "final_shadow_colors": [
+        { "value": "black" },
+        { "value": "aquamarine" },
+        { "value": "white" },
+        { "value": "red" },
+        { "value": "blue" },
+        { "value": "yellow" },
+        { "value": "green" },
+        { "value": "pink" }
+    ],
+    "glow_times": [
+        { "value": "0.3" },
+        { "value": "2" },
+        { "value": "5" },
+        { "value": "9" }
+    ],
+    "yak_fill_colors": [
+        { "value": "black" },
+        { "value": "white" },
+        { "value": "red" },
+        { "value": "blue" },
+        { "value": "yellow" },
+        { "value": "pink" }
+    ],
+    "hover_colors": [
+        { "value": "black" },
+        { "value": "white" },
+        { "value": "red" },
+        { "value": "blue" },
+        { "value": "yellow" },
+        { "value": "pink" }
+    ],
+    "text_locations": [
+        { "value": "\"start\" x=\"5%\" y=\"10%\"" },
+        { "value": "\"end\" x=\"95%\" y=\"90%\"" },
+        { "value": "\"end\" x=\"95%\" y=\"10%\"" },
+        { "value": "\"start\" x=\"5%\" y=\"90%\"" }
+    ],
+    "texts": [
+        { "value": "石" },
+        { "value": "紙" },
+        { "value": "はさみ" }
+    ]
+}

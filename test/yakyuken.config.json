@@ -1,0 +1,77 @@
+{
+    "metadata": {
+        "backgroundColors": [
+            { "value": "black", "weight": 16 },
+            { "value": "aquamarine", "weight": 12 },
+            { "value": "white", "weight": 12 },
+            { "value": "red", "weight": 12 },
+            { "value": "blue", "weight": 12 },
+            { "value": "yellow", "weight": 12 },
+            { "value": "green", "weight": 12 },
+            { "value": "pink", "weight": 12 }
+        ],
+        "initialShadowColors": [
+            { "value": "black", "weight": 16 },
+            { "value": "aquamarine", "weight": 12 },
+            { "value": "white", "weight": 12 },
+            { "value": "red", "weight": 12 },
+            { "value": "blue", "weight": 12 },
+            { "value": "yellow", "weight": 12 },
+            { "value": "green", "weight": 12 },
+            { "value": "pink", "weight": 12 }
+        ],
+        "finalShadowColors": [
+            { "value": "black", "weight": 16 },
+            { "value": "aquamarine", "weight": 12 },
+            { "value": "white", "weight": 12 },
+            { "value": "red", "weight": 12 },
+            { "value": "blue", "weight": 12 },
+            { "value": "yellow", "weight": 12 },
+            { "value": "green", "weight": 12 },
+            { "value": "pink", "weight": 12 }
+        ],
+        "baseFillColors": [
+            { "value": "black", "weight": 16 },
+            { "value": "aquamarine", "weight": 12 },
+            { "value": "white", "weight": 12 },
+            { "value": "red", "weight": 12 },
+            { "value": "blue", "weight": 12 },
+            { "value": "yellow", "weight": 12 },
+            { "value": "green", "weight": 12 },
+            { "value": "pink", "weight": 12 }
+        ],
+        "glowTimes": [
+            { "value": "0.3", "weight": 25 },
+            { "value": "2", "weight": 25 },
+            { "value": "5", "weight": 25 },
+            { "value": "9", "weight": 25 }
+        ],
+        "yakFillColors": [
+            { "value": "black", "weight": 20 },
+            { "value": "white", "weight": 16 },
+            { "value": "red", "weight": 16 },
+            { "value": "blue", "weight": 16 },
+            { "value": "yellow", "weight": 16 },
+            { "value": "pink", "weight": 16 }
+        ],
+        "hoverColors": [
+            { "value": "black", "weight": 20 },
+            { "value": "white", "weight": 16 },
+            { "value": "red", "weight": 16 },
+            { "value": "blue", "weight": 16 },
+            { "value": "yellow", "weight": 16 },
+            { "value": "pink", "weight": 16 }
+        ],
+        "texts": [
+            { "value": "石", "weight": 33 },
+            { "value": "紙", "weight": 33 },
+            { "value": "はさみ", "weight": 34 }
+        ],
+        "textLocations": [
+            { "value": "\"start\" x=\"5%\" y=\"10%\"", "weight": 25 },
+            { "value": "\"end\" x=\"95%\" y=\"90%\"", "weight": 25 },
+            { "value": "\"end\" x=\"95%\" y=\"10%\"", "weight": 25 },
+            { "value": "\"start\" x=\"5%\" y=\"90%\"", "weight": 25 }
+        ]
+    }
+}

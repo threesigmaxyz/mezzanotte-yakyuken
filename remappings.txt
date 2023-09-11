@@ -1,2 +1,4 @@
 @forge-std=lib/forge-std/src
 @openzeppelin=lib/openzeppelin-contracts/contracts
+@solmate=lib/solmate
+@base64WithDecode=lib/Base64.sol/contracts
