@@ -34,7 +34,7 @@ contract OnChainNFTTests is Test {
         (bytes[] memory images_, uint256[] memory weights_) = Helpers.getImagesAndWeights();
 
         uint256 gasLeft = gasleft();
-        onChainNFT = new OnChainNFT(Helpers.getEncodedTraits(), images_, weights_);
+        onChainNFT = new OnChainNFT(Helpers.getEncodedTraits());
         console.log("constructor gas cost: ", gasLeft - gasleft());
     }
 
@@ -94,7 +94,7 @@ contract OnChainNFTTests is Test {
         (bytes[] memory images_, uint256[] memory weights_) = Helpers.getImagesAndWeights();
 
         uint256 gasLeft = gasleft();
-        onChainNFT = new OnChainNFT(Helpers.getEncodedTraits(), new bytes[](0), new uint256[](0));
+        onChainNFT = new OnChainNFT(Helpers.getEncodedTraits());
         console.log("constructor gas cost: ", gasLeft - gasleft());
 
         Helpers.upload(images_[0], "ami", weights_[0], onChainNFT);

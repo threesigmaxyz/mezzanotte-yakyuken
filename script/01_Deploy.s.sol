@@ -54,12 +54,10 @@ contract Deploy is Script {
         vm.stopBroadcast();
     }
 
-    function _loadImage(
-        string memory path_,
-        string memory viewBox_,
-        string memory fontSize_,
-        string memory name_
-    ) internal returns (bytes memory compressedImage_, uint128 decompressedSize_) {
+    function _loadImage(string memory path_, string memory viewBox_, string memory fontSize_, string memory name_)
+        internal
+        returns (bytes memory compressedImage_, uint128 decompressedSize_)
+    {
         bytes memory image_ = abi.encode(Yakyuken.Image(_loadSVG(path_), viewBox_, fontSize_, name_));
         compressedImage_ = ZipUtils.zip(image_);
         decompressedSize_ = uint128(image_.length);

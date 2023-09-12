@@ -14,12 +14,14 @@ contract ERC721B {
         if (_data[id_].length != 0) revert WriteConflicError(id_);
 
         uint256 dataSize_ = data_.length;
-        uint256 dataPages_ = dataSize_/MAX_STORAGE + 1;  // TODO why + 1?
+        uint256 dataPages_ = dataSize_ / MAX_STORAGE + 1; // TODO why + 1?
 
         for (uint256 i_; i_ < dataPages_; i_++) {
-            _data[id_].push(SSTORE2.write(
-                data_[i_ * MAX_STORAGE:dataSize_ > (i_ + 1) * MAX_STORAGE ? (i_ + 1) * MAX_STORAGE : dataSize_]
-            ));
+            _data[id_].push(
+                SSTORE2.write(
+                    data_[i_ * MAX_STORAGE:dataSize_ > (i_ + 1) * MAX_STORAGE ? (i_ + 1) * MAX_STORAGE : dataSize_]
+                )
+            );
         }
     }
 

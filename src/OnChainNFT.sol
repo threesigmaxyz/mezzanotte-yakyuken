@@ -48,9 +48,7 @@ contract OnChainNFT is ERC721URIStorage, Ownable {
     address public immutable traitsPointer;
     uint256 constant MAX_STORAGE = 24_576 - 1; // 1 extra by for stop opcode
 
-    constructor(bytes memory traits_, bytes[] memory images_, uint256[] memory imageWeights_)
-        Ownable(msg.sender) ERC721("OnChainNFT", "OCNFT") 
-    {
+    constructor(bytes memory traits_) Ownable(msg.sender) ERC721("OnChainNFT", "OCNFT") {
         traitsPointer = SSTORE2.write(traits_);
         //NOTE: NFTs cannot be upload in the constructor because constructor is unable to take calldata as an argument and splicing arrays requires a calldata array
     }
@@ -69,7 +67,8 @@ contract OnChainNFT is ERC721URIStorage, Ownable {
         (Image memory image_, uint256 seed_) = rebuildImage(tokenId_);
         bytes memory dataURI = abi.encodePacked(
             "{",
-            '"name": "TestNFT #', tokenId_.toString(),
+            '"name": "TestNFT #',
+            tokenId_.toString(),
             '", "description": "',
             image_.name,
             '", "image_data": "',
@@ -77,13 +76,12 @@ contract OnChainNFT is ERC721URIStorage, Ownable {
             '"',
             "}"
         );
-        
+
         return string(abi.encodePacked("data:application/json;base64,", Base64.encode(dataURI)));
     }
 
     function rebuildImage(uint256 tokenId_) public view returns (Image memory image_, uint256 seed_) {
         // Rebuild image in the Image struct corresponding to a tokenId_
-
         address[] memory imagePointers_;
 
         // Get contract addresses and seed to reconstruct svg image
@@ -125,7 +123,9 @@ contract OnChainNFT is ERC721URIStorage, Ownable {
         bytes memory svg_ = abi.encodePacked(
             '<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" viewBox="',
             image_.viewBox,
-            '" style="background-color:', info_[0], '">',
+            '" style="background-color:',
+            info_[0],
+            '">',
             _getStyleHeader(info_[1], info_[2], info_[3], info_[4], info_[5], info_[6]),
             image_.path,
             _getHoverText(info_[8], image_.fontSize, info_[7]),
@@ -142,7 +142,7 @@ contract OnChainNFT is ERC721URIStorage, Ownable {
         string memory glowTimes_,
         string memory yakFillColors_,
         string memory hoverColors_
-    ) internal view returns (bytes memory) {
+    ) internal pure returns (bytes memory) {
         return abi.encodePacked(
             "<style>",
             "@keyframes glow {0% {filter: drop-shadow(16px 16px 20px ",
@@ -161,11 +161,11 @@ contract OnChainNFT is ERC721URIStorage, Ownable {
         );
     }
 
-    function _getHoverText(
-        string memory text_,
-        string memory fontSize_,
-        string memory location_
-    ) internal view returns (bytes memory) {
+    function _getHoverText(string memory text_, string memory fontSize_, string memory location_)
+        internal
+        pure
+        returns (bytes memory)
+    {
         return abi.encodePacked(
             "<text text-anchor=",
             location_,

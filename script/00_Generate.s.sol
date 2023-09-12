@@ -18,6 +18,5 @@ contract GenerateScript is Script {
         _yakyuken = new Yakyuken(address(new ZLib()));
     }
 
-    function run() public {        
-    }
+    function run() public { }
 }
