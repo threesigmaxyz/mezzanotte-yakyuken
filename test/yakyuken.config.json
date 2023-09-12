@@ -10,6 +10,16 @@
             { "value": "green", "weight": 12 },
             { "value": "pink", "weight": 12 }
         ],
+        "baseFillColors": [
+            { "value": "black", "weight": 16 },
+            { "value": "aquamarine", "weight": 12 },
+            { "value": "white", "weight": 12 },
+            { "value": "red", "weight": 12 },
+            { "value": "blue", "weight": 12 },
+            { "value": "yellow", "weight": 12 },
+            { "value": "green", "weight": 12 },
+            { "value": "pink", "weight": 12 }
+        ],
         "initialShadowColors": [
             { "value": "black", "weight": 16 },
             { "value": "aquamarine", "weight": 12 },
@@ -30,15 +40,19 @@
             { "value": "green", "weight": 12 },
             { "value": "pink", "weight": 12 }
         ],
-        "baseFillColors": [
-            { "value": "black", "weight": 16 },
-            { "value": "aquamarine", "weight": 12 },
-            { "value": "white", "weight": 12 },
-            { "value": "red", "weight": 12 },
-            { "value": "blue", "weight": 12 },
-            { "value": "yellow", "weight": 12 },
-            { "value": "green", "weight": 12 },
-            { "value": "pink", "weight": 12 }
+        "initialShadowBrightness": [
+            { "value": "0", "weight": 20 },
+            { "value": "25", "weight": 20 },
+            { "value": "50", "weight": 20 },
+            { "value": "75", "weight": 20 },
+            { "value": "100", "weight": 20 }
+        ],
+        "finalShadowBrightness": [
+            { "value": "100", "weight": 20 },
+            { "value": "125", "weight": 20 },
+            { "value": "150", "weight": 20 },
+            { "value": "175", "weight": 20 },
+            { "value": "200", "weight": 20 }
         ],
         "glowTimes": [
             { "value": "0.3", "weight": 25 },
@@ -54,7 +68,7 @@
             { "value": "yellow", "weight": 16 },
             { "value": "pink", "weight": 16 }
         ],
-        "hoverColors": [
+        "yakHoverColors": [
             { "value": "black", "weight": 20 },
             { "value": "white", "weight": 16 },
             { "value": "red", "weight": 16 },

@@ -18,7 +18,7 @@ contract YakyukenTests is Test {
 
     Yakyuken private _yakyuken;
 
-    function _loadSVG(string memory path_) internal returns (string memory svg_) {
+    function _loadSVG(string memory path_) internal view returns (string memory svg_) {
         string memory root_ = vm.projectRoot();
         string memory imagePath_ = string.concat(root_, path_);
         svg_ = vm.readFile(imagePath_);

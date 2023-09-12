@@ -39,13 +39,18 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
     struct Metadata {
         ValueTrait[] backgroundColors;
         ValueTrait[] baseFillColors;
-        ValueTrait[] finalShadowColors;
-        ValueTrait[] glowTimes;
-        ValueTrait[] hoverColors;
         ValueTrait[] initialShadowColors;
-        ValueTrait[] textLocations;
-        ValueTrait[] texts;
+        ValueTrait[] finalShadowColors;
+        ValueTrait[] initialShadowBrightness;
+        ValueTrait[] finalShadowBrightness;
+        ValueTrait[] glowTimes;
+        // ValueTrait[] yak;
         ValueTrait[] yakFillColors;
+        ValueTrait[] yakHoverColors;
+        ValueTrait[] texts;
+        ValueTrait[] textLocations;
+        //ValueTrait[] icon;
+        //ValueTrait[] iconLocation;
     }
 
     constructor(address zlib_) ERC721("Yakyuken", "YNFT") Ownable(msg.sender)
@@ -101,10 +106,12 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
             _getStyleHeader(
                 _weightedRarityGenerator(metadata_.initialShadowColors, uint256(keccak256(abi.encodePacked(tokenId_, "isc")))),
                 _weightedRarityGenerator(metadata_.finalShadowColors, uint256(keccak256(abi.encodePacked(tokenId_, "fsc")))),
+                _weightedRarityGenerator(metadata_.initialShadowBrightness, uint256(keccak256(abi.encodePacked(tokenId_, "isb")))),
+                _weightedRarityGenerator(metadata_.finalShadowBrightness, uint256(keccak256(abi.encodePacked(tokenId_, "fsb")))),
                 _weightedRarityGenerator(metadata_.baseFillColors, uint256(keccak256(abi.encodePacked(tokenId_, "bfc")))),
                 _weightedRarityGenerator(metadata_.glowTimes, uint256(keccak256(abi.encodePacked(tokenId_, "gt")))),
                 _weightedRarityGenerator(metadata_.yakFillColors, uint256(keccak256(abi.encodePacked(tokenId_, "yfc")))),
-                _weightedRarityGenerator(metadata_.hoverColors, uint256(keccak256(abi.encodePacked(tokenId_, "hc"))))),
+                _weightedRarityGenerator(metadata_.yakHoverColors, uint256(keccak256(abi.encodePacked(tokenId_, "hc"))))),
             image_.path,
             _getHoverText(
                 _weightedRarityGenerator(metadata_.texts, uint256(keccak256(abi.encodePacked(tokenId_, "t")))),
@@ -117,7 +124,7 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
     function _getHeader(
         string memory viewBox_,
         string memory backgroundColor_
-    ) internal view returns (bytes memory) {
+    ) internal pure returns (bytes memory) {
         return abi.encodePacked(
             '<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" viewBox="',
             viewBox_,
@@ -130,18 +137,24 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
     function _getStyleHeader(
         string memory initialShadowColors_,
         string memory finalShadowColors_,
+        string memory initialShadowBrightness_,
+        string memory finalShadowBrightness_,
         string memory baseFillColors_,
         string memory glowTimes_,
         string memory yakFillColors_,
         string memory hoverColors_
-    ) internal view returns (bytes memory) {
+    ) internal pure returns (bytes memory) {
         return abi.encodePacked(
             "<style>",
             "@keyframes glow {0% {filter: drop-shadow(16px 16px 20px ",
             initialShadowColors_,
-            ") brightness(100%);}to {filter: drop-shadow(16px 16px 20px ",
+            ") brightness(",
+            initialShadowBrightness_,
+            "%);}to {filter: drop-shadow(16px 16px 20px ",
             finalShadowColors_,
-            ") brightness(200%);}}path {fill: ",
+            ") brightness(",
+            finalShadowBrightness_,
+            "%);}}path {fill: ",
             baseFillColors_,
             ";animation: glow ",
             glowTimes_,
@@ -157,7 +170,7 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
         string memory text_,
         string memory fontSize_,
         string memory location_
-    ) internal view returns (bytes memory) {
+    ) internal pure returns (bytes memory) {
         return abi.encodePacked(
             "<text text-anchor=",
             location_,
@@ -187,7 +200,7 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
 
     function _weightedRarityGenerator(
         ValueTrait[] memory traits_, uint256 seed_
-    ) private view returns (string memory trait_) {
+    ) private pure returns (string memory trait_) {
         uint256 totalWeight_ = 0;
         for (uint256 i_ = 0; i_ < traits_.length; i_++) {
             totalWeight_ += traits_[i_].weight;
