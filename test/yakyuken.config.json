@@ -130,6 +130,12 @@
             { "value": "\"end\" x=\"95%\" y=\"90%\"", "weight": 25 },
             { "value": "\"end\" x=\"95%\" y=\"10%\"", "weight": 25 },
             { "value": "\"start\" x=\"5%\" y=\"90%\"", "weight": 25 }
+        ],
+        "icons": [
+            {"path": "svgPaths/icon/stars.svg", "color": "yellow", "weight": 10 },
+            {"path": "svgPaths/icon/scribble.svg", "color": "red", "weight": 5 },
+            {"path": "svgPaths/icon/abstract.svg", "color": "black", "weight": 10 },
+            {"path": "svgPaths/icon/empty.svg", "color": "transparent", "weight": 75}
         ]
     }
 }
