@@ -9,7 +9,6 @@ import { Strings } from "@openzeppelin/utils/Strings.sol";
 
 import { ERC721B } from "./ERC721B.sol";
 import { ZLib } from "./zip/ZLib.sol";
-import "node_modules/hardhat/console.sol";
 
 contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
     using Strings for uint256;
@@ -123,11 +122,6 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
         Metadata memory metadata_ = abi.decode(_read(METADATA_POINTER), (Metadata));
         Image memory image_ = _weightedImageGenerator(uint256(keccak256(abi.encodePacked(tokenId_, "img"))));
         Icon memory icon_ = _weightedIconGenerator(uint256(keccak256(abi.encodePacked(tokenId_, "icn"))));
-        console.log("Chosen icon...");
-        console.log(icon_.path);
-        console.log(icon_.color);
-        console.log(icon_.name);
-        console.log(icon_.weight);
 
         return abi.encodePacked(
             _getHeader(
