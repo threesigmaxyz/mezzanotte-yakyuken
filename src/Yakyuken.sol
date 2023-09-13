@@ -16,9 +16,14 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
 
     bytes32 private constant METADATA_POINTER = bytes32(keccak256("metadata"));
 
+    uint16 private constant MEMORY_OFFSET = 20;
+
     address private immutable _zlib;
 
     ImageMetadata[] private _imageMetadata;
+    IconMetadata[] private _iconMetadata;
+
+    string public ICON_LOCATION = "TBD";
 
     struct Image {
         string path;
@@ -40,8 +45,14 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
     ///@dev must be in alphabetical order
     struct Icon {
         string color;
+        string name;
         string path;
         uint256 weight;
+    }
+
+    struct IconMetadata {
+        uint128 decompressedSize;
+        uint128 weight;
     }
 
     ///@dev  must be in alphabetical order
@@ -51,7 +62,6 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
         ValueTrait[] finalShadowBrightness;
         ValueTrait[] finalShadowColors;
         ValueTrait[] glowTimes;
-        Icon[] icons;
         ValueTrait[] initialShadowBrightness;
         ValueTrait[] initialShadowColors;
         // ValueTrait[] yak;
@@ -60,22 +70,31 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
         ValueTrait[] yakFillColors;
         ValueTrait[] yakHoverColors;
     }
-    // ValueTrait[] icons; // location is hard coded
 
     constructor(address zlib_) ERC721("Yakyuken", "YNFT") Ownable(msg.sender) {
         _zlib = zlib_;
     }
 
     // TODO only callable once by the deployer.
-    function initialize(bytes calldata metadata_, bytes[] calldata images_, uint128[] calldata decompressedSizes_)
-        external
-    {
+    function initialize(
+        bytes calldata metadata_,
+        bytes[] calldata images_,
+        uint128[] calldata decompressedSizes_,
+        bytes[] calldata icons_,
+        uint128[] calldata decompressedSizesIcons_
+    ) external {
         _write(METADATA_POINTER, metadata_);
 
         uint256 imageCount_ = images_.length;
         for (uint256 i_; i_ < imageCount_; i_++) {
             _write(bytes32(keccak256(abi.encode(i_))), images_[i_]);
             _imageMetadata.push(ImageMetadata(decompressedSizes_[i_], uint128(100 / images_.length))); // TODO pass as init argument
+        }
+
+        uint256 iconCount_ = icons_.length;
+        for (uint256 j_; j_ < iconCount_; j_++) {
+            _write(bytes32(keccak256(abi.encode(j_ + MEMORY_OFFSET))), icons_[j_]);
+            _iconMetadata.push(IconMetadata(decompressedSizesIcons_[j_], uint128(100 / icons_.length))); // TODO pass as init argument
         }
     }
 
@@ -102,8 +121,12 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
     function _readSVG(uint256 tokenId_) internal view returns (bytes memory) {
         Metadata memory metadata_ = abi.decode(_read(METADATA_POINTER), (Metadata));
         Image memory image_ = _weightedImageGenerator(uint256(keccak256(abi.encodePacked(tokenId_, "img"))));
-        //string memory icon_ = _weightedRarityGenerator(metadata_.icons, uint256(keccak256(abi.encodePacked(tokenId_, "icn"))));
-        //console.log(icon_);
+        Icon memory icon_ = _weightedIconGenerator(uint256(keccak256(abi.encodePacked(tokenId_, "icn"))));
+        console.log("Chosen icon...");
+        console.log(icon_.path);
+        console.log(icon_.color);
+        console.log(icon_.name);
+        console.log(icon_.weight);
 
         return abi.encodePacked(
             _getHeader(
@@ -131,9 +154,10 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
                 _weightedRarityGenerator(metadata_.glowTimes, uint256(keccak256(abi.encodePacked(tokenId_, "gt")))),
                 _weightedRarityGenerator(metadata_.yakFillColors, uint256(keccak256(abi.encodePacked(tokenId_, "yfc")))),
                 _weightedRarityGenerator(metadata_.yakHoverColors, uint256(keccak256(abi.encodePacked(tokenId_, "hc")))),
-                "red"
+                icon_.color
             ),
             image_.path,
+            icon_.path,
             _getHoverText(
                 _weightedRarityGenerator(metadata_.texts, uint256(keccak256(abi.encodePacked(tokenId_, "t")))),
                 image_.fontSize,
@@ -204,6 +228,13 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
         );
     }
 
+    function _getIcon(string memory path) internal pure returns (bytes memory) {
+        string memory iconLocation_ = " x=5% y=5% ";
+        string memory iconSize_ = " width=50px height=50px viewbox=0 0 50 50 "; // TODO: iconsize according to yak
+        //TODO: open path into string
+        return abi.encodePacked("<svg ", iconSize_, iconLocation_, "> ", path, "</svg>");
+    }
+
     function _weightedImageGenerator(uint256 seed_) private view returns (Image memory image_) {
         uint256 totalWeight_;
         for (uint256 i_ = 0; i_ < _imageMetadata.length; i_++) {
@@ -214,6 +245,22 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
                 image_ = abi.decode(ZLib(_zlib).inflate(data_, _imageMetadata[i_].decompressedSize), (Image));
 
                 return image_;
+            }
+        }
+
+        // TODO abort
+    }
+
+    function _weightedIconGenerator(uint256 seed_) private view returns (Icon memory icon_) {
+        uint256 totalWeight_;
+        for (uint256 i_ = 0; i_ < _iconMetadata.length; i_++) {
+            totalWeight_ += uint256(_iconMetadata[i_].weight);
+            if (seed_ < (uint256(int256(-1)) / 100) * totalWeight_) {
+                bytes memory data_ = _read(bytes32(keccak256(abi.encode(i_ + MEMORY_OFFSET))));
+
+                icon_ = abi.decode(ZLib(_zlib).inflate(data_, _iconMetadata[i_].decompressedSize), (Icon));
+
+                return icon_;
             }
         }
 

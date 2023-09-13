@@ -16,6 +16,8 @@ contract Deploy is Script {
 
     bytes[] private _images = new bytes[](9);
     uint128[] private _decompressedSizes = new uint128[](9);
+    bytes[] private _icons = new bytes[](4);
+    uint128[] private _decompressedSizesIcons = new uint128[](4);
     bytes private _metadataDetails;
 
     function setUp() public {
@@ -35,6 +37,12 @@ contract Deploy is Script {
         (_images[3], _decompressedSizes[3]) = _loadImage("/svgPaths/v3/tennis.svg", "0 0 320 210", "210", "Tennis");
         (_images[4], _decompressedSizes[4]) = _loadImage("/svgPaths/v3/yak2.svg", "0 0 230 300", "20", "Yakyuken");
 
+        (_icons[0], _decompressedSizesIcons[0]) = _loadIcon("/svgPaths/icon/stars.svg", "Stars", "yellow", 10);
+        (_icons[1], _decompressedSizesIcons[1]) = _loadIcon("/svgPaths/icon/scribble.svg", "Scribble", "red", 5);
+        (_icons[2], _decompressedSizesIcons[2]) = _loadIcon("/svgPaths/icon/abstract.svg", "Abstract", "black", 10);
+        (_icons[3], _decompressedSizesIcons[3]) = _loadIcon("/svgPaths/icon/empty.svg", "transparent", "yellow", 75);
+        //Yakyuken.Metadata memory metadata_ = Yakyuken.Metadata({});
+
         //(_images[5], _decompressedSizes[5]) = _loadImage("/svgPaths/v3/focusedgirl.svg", "0 0 300 500", "36", "Focused Girl");
         //(_images[6], _decompressedSizes[6]) = _loadImage("/svgPaths/v3/josei.svg", "0 0 300 500", "36", "Josei");
         //(_images[6], _decompressedSizes[6]) = _loadImage("/svgPaths/v3/redlady.svg", "0 0 300 500", "36", "Red Lady");
@@ -49,7 +57,7 @@ contract Deploy is Script {
         Yakyuken _yakyuken = new Yakyuken(address(new ZLib()));
 
         // Deploy SVG files.
-        _yakyuken.initialize(_metadataDetails, _images, _decompressedSizes);
+        _yakyuken.initialize(_metadataDetails, _images, _decompressedSizes, _icons, _decompressedSizesIcons);
 
         vm.stopBroadcast();
     }
@@ -67,5 +75,14 @@ contract Deploy is Script {
         string memory root_ = vm.projectRoot();
         string memory imagePath_ = string.concat(root_, path_);
         svg_ = vm.readFile(imagePath_);
+    }
+
+    function _loadIcon(string memory path_, string memory name_, string memory color_, uint256 weight_)
+        internal
+        returns (bytes memory compressedImage_, uint128 decompressedSize_)
+    {
+        bytes memory image_ = abi.encode(Yakyuken.Icon(color_, name_, _loadSVG(path_), weight_));
+        compressedImage_ = ZipUtils.zip(image_);
+        decompressedSize_ = uint128(image_.length);
     }
 }

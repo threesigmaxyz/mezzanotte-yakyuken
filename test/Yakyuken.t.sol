@@ -55,6 +55,15 @@ contract YakyukenTests is Test {
         decompressedSize_ = uint128(image_.length);
     }
 
+    function _loadIcon(string memory path_, string memory name_, string memory color_, uint256 weight_)
+        internal
+        returns (bytes memory compressedImage_, uint128 decompressedSize_)
+    {
+        bytes memory image_ = abi.encode(Yakyuken.Icon(color_, name_, _loadSVG(path_), weight_));
+        compressedImage_ = ZipUtils.zip(image_);
+        decompressedSize_ = uint128(image_.length);
+    }
+
     function setUp() external {
         _setUpArrays();
 
@@ -64,12 +73,9 @@ contract YakyukenTests is Test {
         string memory root_ = vm.projectRoot();
         string memory configPath_ = string.concat(root_, "/test/yakyuken.config.json");
         string memory configData_ = vm.readFile(configPath_);
-        console2.log(configData_);
         bytes memory metadataDetails_ = configData_.parseRaw(".metadata");
-        //emit LogBytes(metadataDetails_);
-        console2.log("gotten metadata details");
-        Yakyuken.Metadata memory metadata_ = abi.decode(metadataDetails_, (Yakyuken.Metadata));
-        emit LogMetadata(metadata_);
+
+        //Yakyuken.Metadata memory metadata_ = abi.decode(metadataDetails_, (Yakyuken.Metadata));
 
         bytes[] memory images_ = new bytes[](5);
         uint128[] memory decompressedSizes_ = new uint128[](5);
@@ -80,13 +86,20 @@ contract YakyukenTests is Test {
         (images_[4], decompressedSizes_[4]) = _loadImage("/svgPaths/yak2.svg", "0 0 230 300", "20", "Yakyuken");
         //NOTE: add other images here
 
+        bytes[] memory icons_ = new bytes[](4);
+        uint128[] memory decompressedSizesIcons_ = new uint128[](4);
+        (icons_[0], decompressedSizesIcons_[0]) = _loadIcon("/svgPaths/icon/stars.svg", "Stars", "yellow", 10);
+        (icons_[1], decompressedSizesIcons_[1]) = _loadIcon("/svgPaths/icon/scribble.svg", "Scribble", "red", 5);
+        (icons_[2], decompressedSizesIcons_[2]) = _loadIcon("/svgPaths/icon/abstract.svg", "Abstract", "black", 10);
+        (icons_[3], decompressedSizesIcons_[3]) = _loadIcon("/svgPaths/icon/empty.svg", "transparent", "yellow", 75);
         //Yakyuken.Metadata memory metadata_ = Yakyuken.Metadata({});
 
-        _yakyuken.initialize(metadataDetails_, images_, decompressedSizes_);
+        _yakyuken.initialize(metadataDetails_, images_, decompressedSizes_, icons_, decompressedSizesIcons_);
     }
 
-    function test_ok() external {
-        //_yakyuken.readSVG(2);
+    function test_ok() external view {
+        string memory svg_ = _yakyuken.readSVG(3);
+        console2.log(svg_);
     }
 
     function test_read_traits() external view {
@@ -109,7 +122,7 @@ contract YakyukenTests is Test {
         _compareValueTraitStruct(metadata_.yakHoverColors, ykHvCol, "Yak Hover Colors");
         //_compareValueTraitStruct(metadata_.texts, txts); // NOTE: see init struct of texts
         _compareValueTraitStruct(metadata_.textLocations, txtLoc, "Text Locations");
-        _compareIconStruct(metadata_.icons, icn, "Icons");
+        //_compareIconStruct(metadata_.icons, icn, "Icons"); // TODO: compare unzipping
     }
 
     /*function test_metadata() external {
@@ -245,11 +258,24 @@ contract YakyukenTests is Test {
         txtLoc.push(Yakyuken.ValueTrait("\"end\" x=\"95%\" y=\"10%\"", 25));
         txtLoc.push(Yakyuken.ValueTrait("\"start\" x=\"5%\" y=\"90%\"", 25));
 
-        icn.push(Yakyuken.Icon("yellow", "svgPaths/icon/stars.svg", 10));
-        icn.push(Yakyuken.Icon("red", "svgPaths/icon/scribble.svg", 5));
-        icn.push(Yakyuken.Icon("black", "svgPaths/icon/abstract.svg", 10));
-        icn.push(Yakyuken.Icon("transparent", "svgPaths/icon/empty.svg", 75));
+        icn.push(Yakyuken.Icon("yellow", "Stars", _loadSVG("/svgPaths/icon/stars.svg"), 10)); //
+        icn.push(Yakyuken.Icon("red", "Scribble", _loadSVG("/svgPaths/icon/scribble.svg"), 5));
+        icn.push(Yakyuken.Icon("black", "Abstract", _loadSVG("/svgPaths/icon/abstract.svg"), 10));
+        icn.push(Yakyuken.Icon("transparent", "None", _loadSVG("/svgPaths/icon/empty.svg"), 75));
     }
+
+    /*
+
+    function _filePathToSvgPathIcon(Yakyuken.Metadata memory originalMetadata_)
+        private
+        view
+        returns (Yakyuken.Metadata memory newMetadata_)
+    {
+        newMetadata_ = originalMetadata_;
+        for (uint256 i_ = 0; i_ < originalMetadata_.icons.length; i_++) {
+            newMetadata_.icons[i_].path = _loadSVG(originalMetadata_.icons[i_].path);
+        }
+    }*/
 
     function _compareValueTraitStruct(
         Yakyuken.ValueTrait[] memory s1_,
@@ -279,6 +305,9 @@ contract YakyukenTests is Test {
             }
             if (keccak256(abi.encodePacked((s1_[i_].color))) != keccak256(abi.encodePacked((s2_[i_].color)))) {
                 revert DifferentValueError(s1_[i_].color, s2_[i_].color, name_);
+            }
+            if (keccak256(abi.encodePacked((s1_[i_].name))) != keccak256(abi.encodePacked((s2_[i_].name)))) {
+                revert DifferentValueError(s1_[i_].name, s2_[i_].name, name_);
             }
 
             if (s1_[i_].weight != s2_[i_].weight) {
