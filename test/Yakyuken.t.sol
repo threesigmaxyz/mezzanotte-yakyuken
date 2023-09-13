@@ -46,12 +46,18 @@ contract YakyukenTests is Test {
         svg_ = vm.readFile(imagePath_);
     }
 
-    function _loadImage(string memory path_, string memory viewBox_, string memory fontSize_, string memory name_)
-        internal
-        returns (bytes memory compressedImage_, uint128 decompressedSize_)
-    {
-        bytes memory image_ = abi.encode(Yakyuken.Image(_loadSVG(path_), viewBox_, fontSize_, name_));
+    function _loadImage(
+        string memory path_,
+        string memory viewBox_,
+        string memory fontSize_,
+        string memory iconSize_,
+        string memory name_
+    ) internal returns (bytes memory compressedImage_, uint128 decompressedSize_) {
+        console2.log(name_);
+        bytes memory image_ = abi.encode(Yakyuken.Image(_loadSVG(path_), viewBox_, fontSize_, iconSize_, name_));
+        console2.log("zipping");
         compressedImage_ = ZipUtils.zip(image_);
+        console2.log("getting size");
         decompressedSize_ = uint128(image_.length);
     }
 
@@ -76,16 +82,71 @@ contract YakyukenTests is Test {
         bytes memory metadataDetails_ = configData_.parseRaw(".metadata");
 
         //Yakyuken.Metadata memory metadata_ = abi.decode(metadataDetails_, (Yakyuken.Metadata));
+        console2.log("Populating array");
+        bytes[] memory images_ = new bytes[](10);
+        uint128[] memory decompressedSizes_ = new uint128[](10);
+        (images_[0], decompressedSizes_[0]) = _loadImage(
+            "/svgPaths/yak/ami.svg", "0 0 300 500", "0", "width=\"50px\" height=\"50px\" viewbox=\"0 0 50 50\"", "Ami"
+        );
+        (images_[1], decompressedSizes_[1]) = _loadImage(
+            "/svgPaths/yak/christine.svg",
+            "0 0 500 470",
+            "0",
+            "width=\"100px\" height=\"100px\" viewbox=\"0 0 100 100\"",
+            "Christine"
+        );
+        (images_[4], decompressedSizes_[4]) = _loadImage(
+            "/svgPaths/yak/takechi.svg",
+            "0 0 700 800",
+            "0",
+            "width=\"100px\" height=\"100px\" viewbox=\"0 0 100 100\"",
+            "Takechi"
+        );
+        (images_[5], decompressedSizes_[5]) = _loadImage(
+            "/svgPaths/yak/sport.svg",
+            "215.709 2.143 566.847 499.207",
+            "0",
+            "width=\"300px\" height=\"100px\" viewbox=\"115.709 1.143 466.847 499.207\"",
+            "Sport"
+        );
 
-        bytes[] memory images_ = new bytes[](5);
-        uint128[] memory decompressedSizes_ = new uint128[](5);
-        (images_[0], decompressedSizes_[0]) = _loadImage("/svgPaths/v3/focusedgirl.svg", "0 0 300 500", "36", "Ami");
-        (images_[1], decompressedSizes_[1]) = _loadImage("/svgPaths/christine.svg", "0 0 500 470", "36", "Christine");
-        (images_[2], decompressedSizes_[2]) = _loadImage("/svgPaths/takechi.svg", "0 0 700 800", "60", "Takechi");
-        (images_[3], decompressedSizes_[3]) = _loadImage("/svgPaths/tennisNew.svg", "0 0 320 210", "210", "Tennis");
-        (images_[4], decompressedSizes_[4]) = _loadImage("/svgPaths/yak2.svg", "0 0 230 300", "20", "Yakyuken");
-        //NOTE: add other images here
-
+        (images_[7], decompressedSizes_[7]) = _loadImage(
+            "/svgPaths/yak/tennis.svg",
+            "0 0 2000 1300",
+            "0",
+            "width=\"200px\" height=\"200px\" viewbox=\"0 0 200 200\"",
+            "Tennis"
+        );
+        (images_[8], decompressedSizes_[8]) = _loadImage(
+            "/svgPaths/yak/yak2.svg",
+            "0 0 230 300",
+            "0",
+            "width=\"50px\" height=\"50px\" viewbox=\"0 0 100 100\"",
+            "Yak2"
+        );
+        (images_[9], decompressedSizes_[9]) = _loadImage(
+            "/svgPaths/yak/focusedgirl.svg",
+            "10.551 0.897 786.819 630.439",
+            "0",
+            "width=\"100.00px\" height=\"100.00px\" viewbox=\"10.551 0.897 786.819 630.439\"",
+            "FocusedGirl"
+        );
+        //NOTE: currently these two images are too big to be compressed
+        /*
+        (images_[2], decompressedSizes_[2]) = _loadImage(
+            "/svgPaths/yak/redlady.svg",
+            "0 0 1000 600",
+            "0",
+            "width=\"100px\" height=\"100px\" viewbox=\"0 0 100 100\"",
+            "RedLady"
+        );
+        (images_[3], decompressedSizes_[3]) = _loadImage(
+            "/svgPaths/yak/josei.svg",
+            "0 0 1000 600",
+            "0",
+            "width=\"100px\" height=\"100px\" viewbox=\"0 0 100 100\"",
+            "Josei"
+        );*/
         bytes[] memory icons_ = new bytes[](4);
         uint128[] memory decompressedSizesIcons_ = new uint128[](4);
         (icons_[0], decompressedSizesIcons_[0]) = _loadIcon("/svgPaths/icon/stars.svg", "Stars", "yellow", 10);
@@ -94,6 +155,7 @@ contract YakyukenTests is Test {
         (icons_[3], decompressedSizesIcons_[3]) = _loadIcon("/svgPaths/icon/empty.svg", "transparent", "yellow", 75);
         //Yakyuken.Metadata memory metadata_ = Yakyuken.Metadata({});
 
+        console2.log("Initializing");
         _yakyuken.initialize(metadataDetails_, images_, decompressedSizes_, icons_, decompressedSizesIcons_);
     }
 

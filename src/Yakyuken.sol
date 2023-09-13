@@ -29,6 +29,7 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
         string path;
         string viewBox;
         string fontSize;
+        string iconSize;
         string name;
     }
 

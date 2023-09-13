@@ -31,11 +31,72 @@ contract Deploy is Script {
         // TODO Yakyuken.Metadata memory metadata_ = abi.decode(metadataDetails_, (Yakyuken.Metadata));
 
         // Load SVG files.
-        (_images[0], _decompressedSizes[0]) = _loadImage("/svgPaths/v3/ami.svg", "0 0 300 500", "36", "Ami");
-        (_images[1], _decompressedSizes[1]) = _loadImage("/svgPaths/v3/christine.svg", "0 0 500 470", "36", "Christine");
-        (_images[2], _decompressedSizes[2]) = _loadImage("/svgPaths/v3/takechi.svg", "0 0 700 800", "60", "Takechi");
-        (_images[3], _decompressedSizes[3]) = _loadImage("/svgPaths/v3/tennis.svg", "0 0 320 210", "210", "Tennis");
-        (_images[4], _decompressedSizes[4]) = _loadImage("/svgPaths/v3/yak2.svg", "0 0 230 300", "20", "Yakyuken");
+        (_images[0], _decompressedSizes[0]) = _loadImage(
+            "/svgPaths/yak/ami.svg", "0 0 300 500", "0", "width=\"50px\" height=\"50px\" viewbox=\"0 0 50 50\"", "Ami"
+        );
+        (_images[1], _decompressedSizes[1]) = _loadImage(
+            "/svgPaths/yak/christine.svg",
+            "0 0 500 470",
+            "0",
+            "width=\"100px\" height=\"100px\" viewbox=\"0 0 100 100\"",
+            "Christine"
+        );
+        (_images[2], _decompressedSizes[2]) = _loadImage(
+            "/svgPaths/yak/redlady.svg",
+            "0 0 1000 600",
+            "0",
+            "width=\"100px\" height=\"100px\" viewbox=\"0 0 100 100\"",
+            "RedLady"
+        );
+        (_images[3], _decompressedSizes[3]) = _loadImage(
+            "/svgPaths/yak/josei.svg",
+            "0 0 1000 600",
+            "0",
+            "width=\"100px\" height=\"100px\" viewbox=\"0 0 100 100\"",
+            "Josei"
+        );
+        (_images[4], _decompressedSizes[4]) = _loadImage(
+            "/svgPaths/yak/takechi.svg",
+            "0 0 700 800",
+            "0",
+            "width=\"100px\" height=\"100px\" viewbox=\"0 0 100 100\"",
+            "Takechi"
+        );
+        (_images[5], _decompressedSizes[5]) = _loadImage(
+            "/svgPaths/yak/sport.svg",
+            "215.709 2.143 566.847 499.207",
+            "0",
+            "width=\"300px\" height=\"100px\" viewbox=\"115.709 1.143 466.847 499.207\"",
+            "Sport"
+        );
+        (_images[6], _decompressedSizes[6]) = _loadImage(
+            "/svgPaths/yak/thinker.svg",
+            "0 0 1000 600",
+            "0",
+            "width=\"100px\" height=\"100px\" viewbox=\"0 0 100 100\"",
+            "Thinker"
+        );
+        (_images[7], _decompressedSizes[7]) = _loadImage(
+            "/svgPaths/yak/tennis.svg",
+            "0 0 2000 1300",
+            "0",
+            "width=\"200px\" height=\"200px\" viewbox=\"0 0 200 200\"",
+            "Tennis"
+        );
+        (_images[8], _decompressedSizes[8]) = _loadImage(
+            "/svgPaths/yak/yak2.svg",
+            "0 0 230 300",
+            "0",
+            "width=\"50px\" height=\"50px\" viewbox=\"0 0 100 100\"",
+            "Yak2"
+        );
+        (_images[9], _decompressedSizes[9]) = _loadImage(
+            "/svgPaths/yak/focusedgirl.svg",
+            "10.551 0.897 786.819 630.439",
+            "0",
+            "width=\"100.00px\" height=\"100.00px\" viewbox=\"10.551 0.897 786.819 630.439\"",
+            "FocusedGirl"
+        );
 
         (_icons[0], _decompressedSizesIcons[0]) = _loadIcon("/svgPaths/icon/stars.svg", "Stars", "yellow", 10);
         (_icons[1], _decompressedSizesIcons[1]) = _loadIcon("/svgPaths/icon/scribble.svg", "Scribble", "red", 5);
@@ -62,11 +123,14 @@ contract Deploy is Script {
         vm.stopBroadcast();
     }
 
-    function _loadImage(string memory path_, string memory viewBox_, string memory fontSize_, string memory name_)
-        internal
-        returns (bytes memory compressedImage_, uint128 decompressedSize_)
-    {
-        bytes memory image_ = abi.encode(Yakyuken.Image(_loadSVG(path_), viewBox_, fontSize_, name_));
+    function _loadImage(
+        string memory path_,
+        string memory viewBox_,
+        string memory fontSize_,
+        string memory iconSize_,
+        string memory name_
+    ) internal returns (bytes memory compressedImage_, uint128 decompressedSize_) {
+        bytes memory image_ = abi.encode(Yakyuken.Image(_loadSVG(path_), viewBox_, fontSize_, iconSize_, name_));
         compressedImage_ = ZipUtils.zip(image_);
         decompressedSize_ = uint128(image_.length);
     }
