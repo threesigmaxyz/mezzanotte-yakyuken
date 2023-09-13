@@ -158,7 +158,7 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
                 icon_.color
             ),
             image_.path,
-            icon_.path,
+            _getIcon(icon_.path, image_.iconSize),
             _getHoverText(
                 _weightedRarityGenerator(metadata_.texts, uint256(keccak256(abi.encodePacked(tokenId_, "t")))),
                 image_.fontSize,
@@ -229,11 +229,10 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
         );
     }
 
-    function _getIcon(string memory path) internal pure returns (bytes memory) {
-        string memory iconLocation_ = " x=5% y=5% ";
-        string memory iconSize_ = " width=50px height=50px viewbox=0 0 50 50 "; // TODO: iconsize according to yak
+    function _getIcon(string memory path_, string memory iconSize_) internal pure returns (bytes memory) {
+        string memory iconLocation_ = " x=\"5%\" y=\"5%\" ";
         //TODO: open path into string
-        return abi.encodePacked("<svg ", iconSize_, iconLocation_, "> ", path, "</svg>");
+        return abi.encodePacked("<svg ", iconSize_, iconLocation_, "> ", path_, "</svg>");
     }
 
     function _weightedImageGenerator(uint256 seed_) private view returns (Image memory image_) {

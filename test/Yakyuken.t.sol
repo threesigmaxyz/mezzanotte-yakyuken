@@ -53,11 +53,8 @@ contract YakyukenTests is Test {
         string memory iconSize_,
         string memory name_
     ) internal returns (bytes memory compressedImage_, uint128 decompressedSize_) {
-        console2.log(name_);
         bytes memory image_ = abi.encode(Yakyuken.Image(_loadSVG(path_), viewBox_, fontSize_, iconSize_, name_));
-        console2.log("zipping");
         compressedImage_ = ZipUtils.zip(image_);
-        console2.log("getting size");
         decompressedSize_ = uint128(image_.length);
     }
 
@@ -82,7 +79,6 @@ contract YakyukenTests is Test {
         bytes memory metadataDetails_ = configData_.parseRaw(".metadata");
 
         //Yakyuken.Metadata memory metadata_ = abi.decode(metadataDetails_, (Yakyuken.Metadata));
-        console2.log("Populating array");
         bytes[] memory images_ = new bytes[](10);
         uint128[] memory decompressedSizes_ = new uint128[](10);
         (images_[0], decompressedSizes_[0]) = _loadImage(
@@ -152,16 +148,17 @@ contract YakyukenTests is Test {
         (icons_[0], decompressedSizesIcons_[0]) = _loadIcon("/svgPaths/icon/stars.svg", "Stars", "yellow", 10);
         (icons_[1], decompressedSizesIcons_[1]) = _loadIcon("/svgPaths/icon/scribble.svg", "Scribble", "red", 5);
         (icons_[2], decompressedSizesIcons_[2]) = _loadIcon("/svgPaths/icon/abstract.svg", "Abstract", "black", 10);
-        (icons_[3], decompressedSizesIcons_[3]) = _loadIcon("/svgPaths/icon/empty.svg", "transparent", "yellow", 75);
+        (icons_[3], decompressedSizesIcons_[3]) = _loadIcon("/svgPaths/icon/empty.svg", "None", "transparent", 75);
         //Yakyuken.Metadata memory metadata_ = Yakyuken.Metadata({});
 
-        console2.log("Initializing");
         _yakyuken.initialize(metadataDetails_, images_, decompressedSizes_, icons_, decompressedSizesIcons_);
     }
 
-    function test_ok() external view {
-        string memory svg_ = _yakyuken.readSVG(3);
-        console2.log(svg_);
+    function test_ok() external {
+        uint128 tokenId_ = 6;
+        string memory svg_ = _yakyuken.readSVG(tokenId_);
+        vm.writeFile(string.concat(string.concat("test/out/", vm.toString(tokenId_)), ".svg"), svg_);
+        //console2.log(svg_);
     }
 
     function test_read_traits() external view {

@@ -101,7 +101,7 @@ contract Deploy is Script {
         (_icons[0], _decompressedSizesIcons[0]) = _loadIcon("/svgPaths/icon/stars.svg", "Stars", "yellow", 10);
         (_icons[1], _decompressedSizesIcons[1]) = _loadIcon("/svgPaths/icon/scribble.svg", "Scribble", "red", 5);
         (_icons[2], _decompressedSizesIcons[2]) = _loadIcon("/svgPaths/icon/abstract.svg", "Abstract", "black", 10);
-        (_icons[3], _decompressedSizesIcons[3]) = _loadIcon("/svgPaths/icon/empty.svg", "transparent", "yellow", 75);
+        (_icons[3], _decompressedSizesIcons[3]) = _loadIcon("/svgPaths/icon/empty.svg", "None", "transparent", 75);
         //Yakyuken.Metadata memory metadata_ = Yakyuken.Metadata({});
 
         //(_images[5], _decompressedSizes[5]) = _loadImage("/svgPaths/v3/focusedgirl.svg", "0 0 300 500", "36", "Focused Girl");
@@ -135,7 +135,7 @@ contract Deploy is Script {
         decompressedSize_ = uint128(image_.length);
     }
 
-    function _loadSVG(string memory path_) internal returns (string memory svg_) {
+    function _loadSVG(string memory path_) internal view returns (string memory svg_) {
         string memory root_ = vm.projectRoot();
         string memory imagePath_ = string.concat(root_, path_);
         svg_ = vm.readFile(imagePath_);
