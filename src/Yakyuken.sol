@@ -12,6 +12,7 @@ import { ZLib } from "./zip/ZLib.sol";
 
 contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
     using Strings for uint256;
+    event LogBytes(bytes1 point);
 
     bytes32 private constant METADATA_POINTER = bytes32(keccak256("metadata"));
 
@@ -55,6 +56,21 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
         uint128 weight;
     }
 
+    struct MetadataBytes {
+        uint8 glowTimes;
+        uint8 backgroundColors;
+        uint8 yakHoverColors;
+        uint8 finalShadowColors;
+        uint8 baseFillColors;
+        uint8 yakFillColors;
+        uint8 yak;
+        uint8 initialShadowColors;
+        uint8 initialShadowBrightness;
+        uint8 finalShadowBrightness;
+        uint8 icon;
+        uint8 texts;
+    }
+
     ///@dev  must be in alphabetical order
     struct Metadata {
         ValueTrait[] backgroundColors;
@@ -70,6 +86,8 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
         ValueTrait[] yakFillColors;
         ValueTrait[] yakHoverColors;
     }
+
+    event LogResult(MetadataBytes result);
 
     constructor(address zlib_) ERC721("Yakyuken", "YNFT") Ownable(msg.sender) {
         _zlib = zlib_;
@@ -114,8 +132,29 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
         return string(abi.encodePacked("data:application/json;base64,", Base64.encode(dataURI)));
     }
 
+    function generateSVGfromBytes(bytes memory metadataInfo_ ) public{
+        MetadataBytes memory data_ = processMetadataAsBytes(metadataInfo_);
+    }
+
     function readSVG(uint256 tokenId_) external view returns (string memory svg_) {
         svg_ = string(_readSVG(tokenId_));
+    }
+
+    function processMetadataAsBytes(bytes memory metadataInfo_) public returns(MetadataBytes memory data_){
+        data_.glowTimes = uint8(metadataInfo_[0]); // 7
+        data_.backgroundColors = uint8(metadataInfo_[1]); // 16
+        data_.yakHoverColors  = uint8(metadataInfo_[2] >> 4); // 3
+        data_.finalShadowColors = uint8(metadataInfo_[2] & 0x0F); // 3
+        data_.baseFillColors  = uint8(metadataInfo_[3] >> 4); // 4
+        data_.yakFillColors  = uint8(metadataInfo_[3] & 0x0F); // 4
+        data_.yak = uint8(metadataInfo_[4] >> 4); // 6
+        data_.initialShadowColors = uint8(metadataInfo_[4] & 0x0F); // 6
+        data_.initialShadowBrightness = uint8(metadataInfo_[5] >> 4); // 9
+        data_.finalShadowBrightness = uint8(metadataInfo_[5] & 0x0F); // 9
+        data_.icon = uint8(metadataInfo_[6] >> 4); // 4
+        data_.texts = uint8(metadataInfo_[6] & 0x0F); // 4
+
+        emit LogResult(data_);
     }
 
     function _readSVG(uint256 tokenId_) internal view returns (bytes memory) {

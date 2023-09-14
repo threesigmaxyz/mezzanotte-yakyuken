@@ -79,8 +79,8 @@ contract YakyukenTests is Test {
         bytes memory metadataDetails_ = configData_.parseRaw(".metadata");
 
         //Yakyuken.Metadata memory metadata_ = abi.decode(metadataDetails_, (Yakyuken.Metadata));
-        bytes[] memory images_ = new bytes[](10);
-        uint128[] memory decompressedSizes_ = new uint128[](10);
+        bytes[] memory images_ = new bytes[](8);
+        uint128[] memory decompressedSizes_ = new uint128[](8);
         (images_[0], decompressedSizes_[0]) = _loadImage(
             "/svgPaths/yak/ami.svg", "0 0 300 500", "0", "width=\"50px\" height=\"50px\" viewbox=\"0 0 50 50\"", "Ami"
         );
@@ -106,6 +106,14 @@ contract YakyukenTests is Test {
             "Sport"
         );
 
+        (images_[6], decompressedSizes_[6]) = _loadImage(
+            "/svgPaths/yak/thinker.svg",
+            "0 0 1000 600",
+            "0",
+            "width=\"100px\" height=\"100px\" viewbox=\"0 0 100 100\"",
+            "Thinker"
+        );
+
         (images_[7], decompressedSizes_[7]) = _loadImage(
             "/svgPaths/yak/tennis.svg",
             "0 0 2000 1300",
@@ -113,14 +121,14 @@ contract YakyukenTests is Test {
             "width=\"200px\" height=\"200px\" viewbox=\"0 0 200 200\"",
             "Tennis"
         );
-        (images_[8], decompressedSizes_[8]) = _loadImage(
+        (images_[2], decompressedSizes_[2]) = _loadImage(
             "/svgPaths/yak/yak2.svg",
             "0 0 230 300",
             "0",
             "width=\"50px\" height=\"50px\" viewbox=\"0 0 100 100\"",
             "Yak2"
         );
-        (images_[9], decompressedSizes_[9]) = _loadImage(
+        (images_[3], decompressedSizes_[3]) = _loadImage(
             "/svgPaths/yak/focusedgirl.svg",
             "10.551 0.897 786.819 630.439",
             "0",
@@ -155,9 +163,11 @@ contract YakyukenTests is Test {
     }
 
     function test_ok() external {
-        uint128 tokenId_ = 6;
-        string memory svg_ = _yakyuken.readSVG(tokenId_);
-        vm.writeFile(string.concat(string.concat("test/out/", vm.toString(tokenId_)), ".svg"), svg_);
+        uint128 maxToken_ = 10;
+        for (uint128 tokenId_ = 0; tokenId_ < maxToken_; tokenId_++) {
+            string memory svg_ = _yakyuken.readSVG(tokenId_);
+            vm.writeFile(string.concat(string.concat("test/out/", vm.toString(tokenId_)), ".svg"), svg_);
+        }
         //console2.log(svg_);
     }
 
@@ -184,6 +194,22 @@ contract YakyukenTests is Test {
         //_compareIconStruct(metadata_.icons, icn, "Icons"); // TODO: compare unzipping
     }
 
+    function test_process_bytes_info() external {
+        bytes memory info_ = hex"07103346649A44";
+        Yakyuken.MetadataBytes memory result = _yakyuken.processMetadataAsBytes(info_);
+        assertEq(result.glowTimes, 7);
+        assertEq(result.backgroundColors, 16);
+        assertEq(result.yakHoverColors, 3);
+        assertEq(result.finalShadowColors, 3);
+        assertEq(result.baseFillColors, 4);
+        assertEq(result.yakFillColors, 6);
+        assertEq(result.yak, 6);
+        assertEq(result.initialShadowColors, 4);
+        assertEq(result.initialShadowBrightness, 9);
+        assertEq(result.finalShadowBrightness, 10);
+        assertEq(result.icon, 4);
+        assertEq(result.texts, 4);
+    }
     /*function test_metadata() external {
         for (uint256 i_; i_ < 10; i_++) {
             string memory svg_ = _yakyuken.readSVG(i_);
