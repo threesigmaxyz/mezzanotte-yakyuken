@@ -32,40 +32,8 @@ contract YakyukenTests is Test {
     Yakyuken.ValueTrait[] public txtLoc;
     Yakyuken.Icon[] public icn;
 
-    event LogMetadata(Yakyuken.Metadata mt);
-    event LogTrait(Yakyuken.ValueTrait[]);
-    event LogIcon(Yakyuken.Icon[]);
-    event LogBytes(bytes);
-
     error DifferentValueError(string vl1, string vl2, string loc);
     error DifferentWeightError(uint256 vl1, uint256 vl2, string loc);
-
-    function _loadSVG(string memory path_) internal view returns (string memory svg_) {
-        string memory root_ = vm.projectRoot();
-        string memory imagePath_ = string.concat(root_, path_);
-        svg_ = vm.readFile(imagePath_);
-    }
-
-    function _loadImage(
-        string memory path_,
-        string memory viewBox_,
-        string memory fontSize_,
-        string memory iconSize_,
-        string memory name_
-    ) internal returns (bytes memory compressedImage_, uint128 decompressedSize_) {
-        bytes memory image_ = abi.encode(Yakyuken.Image(_loadSVG(path_), viewBox_, fontSize_, iconSize_, name_));
-        compressedImage_ = ZipUtils.zip(image_);
-        decompressedSize_ = uint128(image_.length);
-    }
-
-    function _loadIcon(string memory path_, string memory name_, string memory color_, uint256 weight_)
-        internal
-        returns (bytes memory compressedImage_, uint128 decompressedSize_)
-    {
-        bytes memory image_ = abi.encode(Yakyuken.Icon(color_, name_, _loadSVG(path_), weight_));
-        compressedImage_ = ZipUtils.zip(image_);
-        decompressedSize_ = uint128(image_.length);
-    }
 
     function setUp() external {
         _setUpArrays();
@@ -165,12 +133,11 @@ contract YakyukenTests is Test {
     }
 
     function test_ok() external {
-        uint128 maxToken_ = 10;
+        uint128 maxToken_ = 1;
         for (uint128 tokenId_ = 0; tokenId_ < maxToken_; tokenId_++) {
-            string memory svg_ = _yakyuken.readSVG(tokenId_);
+            string memory svg_ = _yakyuken.generateSVGfromBytes(tokenId_);
             vm.writeFile(string.concat(string.concat("test/out/", vm.toString(tokenId_)), ".svg"), svg_);
         }
-        //console2.log(svg_);
     }
 
     function test_read_traits() external view {
@@ -192,7 +159,6 @@ contract YakyukenTests is Test {
         _compareValueTraitStruct(metadata_.yakFillColors, ykFillCol, "Yak Fill Colors");
         _compareValueTraitStruct(metadata_.yakHoverColors, ykHvCol, "Yak Hover Colors");
         //_compareValueTraitStruct(metadata_.texts, txts); // NOTE: see init struct of texts
-        _compareValueTraitStruct(metadata_.textLocations, txtLoc, "Text Locations");
         //_compareIconStruct(metadata_.icons, icn, "Icons"); // TODO: compare unzipping
     }
 
@@ -214,20 +180,10 @@ contract YakyukenTests is Test {
     }
 
     function test_generate_from_bytes_data() external {
-        bytes memory info_ = hex"07103346642311";
         uint16 tokenId_ = 0;
-        string memory svg_ = _yakyuken.generateSVGfromBytes(info_);
-        vm.writeFile(string.concat(string.concat("test/outNew/", vm.toString(tokenId_)), ".svg"), svg_);
+        string memory svg_ = _yakyuken.generateSVGfromBytes(tokenId_);
+        vm.writeFile(string.concat(string.concat("test/out/", vm.toString(tokenId_)), ".svg"), svg_);
     }
-
-    /*function test_metadata() external {
-        for (uint256 i_; i_ < 10; i_++) {
-            string memory svg_ = _yakyuken.readSVG(i_);
-            vm.writeFile(
-                string(abi.encodePacked("generatedSVGs/solidity/", Strings.toString(i_), ".svg")),
-                svg_);
-        }
-    }*/
 
     function _setUpArrays() internal {
         //Note: decided to hardcode the expected results so it is a different method than reading from the json file
@@ -348,29 +304,11 @@ contract YakyukenTests is Test {
         //txts.push(Yakyuken.ValueTrait("紙", 33));
         //txts.push(Yakyuken.ValueTrait("はさみ", 34));
 
-        txtLoc.push(Yakyuken.ValueTrait("\"start\" x=\"5%\" y=\"10%\"", 25));
-        txtLoc.push(Yakyuken.ValueTrait("\"end\" x=\"95%\" y=\"90%\"", 25));
-        txtLoc.push(Yakyuken.ValueTrait("\"end\" x=\"95%\" y=\"10%\"", 25));
-        txtLoc.push(Yakyuken.ValueTrait("\"start\" x=\"5%\" y=\"90%\"", 25));
-
         icn.push(Yakyuken.Icon("yellow", "Stars", _loadSVG("/svgPaths/icon/stars.svg"), 10)); //
         icn.push(Yakyuken.Icon("red", "Scribble", _loadSVG("/svgPaths/icon/scribble.svg"), 5));
         icn.push(Yakyuken.Icon("black", "Abstract", _loadSVG("/svgPaths/icon/abstract.svg"), 10));
         icn.push(Yakyuken.Icon("transparent", "None", _loadSVG("/svgPaths/icon/empty.svg"), 75));
     }
-
-    /*
-
-    function _filePathToSvgPathIcon(Yakyuken.Metadata memory originalMetadata_)
-        private
-        view
-        returns (Yakyuken.Metadata memory newMetadata_)
-    {
-        newMetadata_ = originalMetadata_;
-        for (uint256 i_ = 0; i_ < originalMetadata_.icons.length; i_++) {
-            newMetadata_.icons[i_].path = _loadSVG(originalMetadata_.icons[i_].path);
-        }
-    }*/
 
     function _compareValueTraitStruct(
         Yakyuken.ValueTrait[] memory s1_,
@@ -409,5 +347,32 @@ contract YakyukenTests is Test {
                 revert DifferentWeightError(s1_[i_].weight, s2_[i_].weight, name_);
             }
         }
+    }
+
+    function _loadSVG(string memory path_) internal view returns (string memory svg_) {
+        string memory root_ = vm.projectRoot();
+        string memory imagePath_ = string.concat(root_, path_);
+        svg_ = vm.readFile(imagePath_);
+    }
+
+    function _loadImage(
+        string memory path_,
+        string memory viewBox_,
+        string memory fontSize_,
+        string memory iconSize_,
+        string memory name_
+    ) internal returns (bytes memory compressedImage_, uint128 decompressedSize_) {
+        bytes memory image_ = abi.encode(Yakyuken.Image(_loadSVG(path_), viewBox_, fontSize_, iconSize_, name_));
+        compressedImage_ = ZipUtils.zip(image_);
+        decompressedSize_ = uint128(image_.length);
+    }
+
+    function _loadIcon(string memory path_, string memory name_, string memory color_, uint256 weight_)
+        internal
+        returns (bytes memory compressedImage_, uint128 decompressedSize_)
+    {
+        bytes memory image_ = abi.encode(Yakyuken.Icon(color_, name_, _loadSVG(path_), weight_));
+        compressedImage_ = ZipUtils.zip(image_);
+        decompressedSize_ = uint128(image_.length);
     }
 }

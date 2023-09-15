@@ -13,19 +13,15 @@ import { ZLib } from "./zip/ZLib.sol";
 contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
     using Strings for uint256;
 
-    event LogBytes(bytes1 point);
-
     bytes32 private constant METADATA_POINTER = bytes32(keccak256("metadata"));
 
-    uint16 private constant MEMORY_OFFSET = 20;
+    uint16 private constant MEMORY_OFFSET = 100;
 
     address private immutable _zlib;
 
     ImageMetadata[] private _imageMetadata;
     IconMetadata[] private _iconMetadata;
     bytes[] private _imageTraits;
-
-    string public ICON_LOCATION = "TBD";
 
     struct Image {
         string path;
@@ -82,8 +78,6 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
         ValueTrait[] glowTimes;
         ValueTrait[] initialShadowBrightness;
         ValueTrait[] initialShadowColors;
-        // ValueTrait[] yak;
-        ValueTrait[] textLocations;
         ValueTrait[] texts;
         ValueTrait[] yakFillColors;
         ValueTrait[] yakHoverColors;
@@ -141,12 +135,8 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
         return string(abi.encodePacked("data:application/json;base64,", Base64.encode(dataURI)));
     }
 
-    function generateSVGfromBytes(bytes memory metadataInfo_) external view returns (string memory svg_) {
-        svg_ = string(_generateSVGfromBytes(metadataInfo_));
-    }
-
-    function readSVG(uint256 tokenId_) external view returns (string memory svg_) {
-        svg_ = string(_readSVG(tokenId_));
+    function generateSVGfromBytes(uint256 tokenId_) external view returns (string memory svg_) {
+        svg_ = string(_generateSVGfromBytes(_imageTraits[tokenId_]));
     }
 
     function processMetadataAsBytes(bytes memory metadataInfo_) public view returns (MetadataBytes memory data_) {
@@ -237,50 +227,6 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
         );
     }
 
-    function _readSVG(uint256 tokenId_) internal view returns (bytes memory) {
-        Metadata memory metadata_ = abi.decode(_read(METADATA_POINTER), (Metadata));
-        Image memory image_ = _weightedImageGenerator(uint256(keccak256(abi.encodePacked(tokenId_, "img"))));
-        Icon memory icon_ = _weightedIconGenerator(uint256(keccak256(abi.encodePacked(tokenId_, "icn"))));
-
-        return abi.encodePacked(
-            _getHeader(
-                image_.viewBox,
-                _weightedRarityGenerator(
-                    metadata_.backgroundColors, uint256(keccak256(abi.encodePacked(tokenId_, "bg")))
-                )
-            ),
-            _getStyleHeader(
-                _weightedRarityGenerator(
-                    metadata_.initialShadowColors, uint256(keccak256(abi.encodePacked(tokenId_, "isc")))
-                ),
-                _weightedRarityGenerator(
-                    metadata_.finalShadowColors, uint256(keccak256(abi.encodePacked(tokenId_, "fsc")))
-                ),
-                _weightedRarityGenerator(
-                    metadata_.initialShadowBrightness, uint256(keccak256(abi.encodePacked(tokenId_, "isb")))
-                ),
-                _weightedRarityGenerator(
-                    metadata_.finalShadowBrightness, uint256(keccak256(abi.encodePacked(tokenId_, "fsb")))
-                ),
-                _weightedRarityGenerator(
-                    metadata_.baseFillColors, uint256(keccak256(abi.encodePacked(tokenId_, "bfc")))
-                ),
-                _weightedRarityGenerator(metadata_.glowTimes, uint256(keccak256(abi.encodePacked(tokenId_, "gt")))),
-                _weightedRarityGenerator(metadata_.yakFillColors, uint256(keccak256(abi.encodePacked(tokenId_, "yfc")))),
-                _weightedRarityGenerator(metadata_.yakHoverColors, uint256(keccak256(abi.encodePacked(tokenId_, "hc")))),
-                icon_.color
-            ),
-            image_.path,
-            _getIcon(icon_.path, image_.iconSize),
-            _getHoverText(
-                _weightedRarityGenerator(metadata_.texts, uint256(keccak256(abi.encodePacked(tokenId_, "t")))),
-                image_.fontSize,
-                _weightedRarityGenerator(metadata_.textLocations, uint256(keccak256(abi.encodePacked(tokenId_, "tl"))))
-            ),
-            "</svg>"
-        );
-    }
-
     function _getHeader(string memory viewBox_, string memory backgroundColor_) internal pure returns (bytes memory) {
         return abi.encodePacked(
             '<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" viewBox="',
@@ -326,73 +272,8 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
         );
     }
 
-    function _getHoverText(string memory text_, string memory fontSize_, string memory location_)
-        internal
-        pure
-        returns (bytes memory)
-    {
-        return abi.encodePacked(
-            "<text text-anchor=",
-            location_,
-            ' font-family="Helvetica" font-size="',
-            fontSize_,
-            '" fill="white">',
-            text_,
-            "</text>"
-        );
-    }
-
     function _getIcon(string memory path_, string memory iconSize_) internal pure returns (bytes memory) {
         string memory iconLocation_ = " x=\"5%\" y=\"5%\" ";
-        //TODO: open path into string
         return abi.encodePacked("<svg ", iconSize_, iconLocation_, "> ", path_, "</svg>");
-    }
-
-    function _weightedImageGenerator(uint256 seed_) private view returns (Image memory image_) {
-        uint256 totalWeight_;
-        for (uint256 i_ = 0; i_ < _imageMetadata.length; i_++) {
-            totalWeight_ += uint256(_imageMetadata[i_].weight);
-            if (seed_ < (uint256(int256(-1)) / 100) * totalWeight_) {
-                bytes memory data_ = _read(bytes32(keccak256(abi.encode(i_))));
-
-                image_ = abi.decode(ZLib(_zlib).inflate(data_, _imageMetadata[i_].decompressedSize), (Image));
-
-                return image_;
-            }
-        }
-
-        // TODO abort
-    }
-
-    function _weightedIconGenerator(uint256 seed_) private view returns (Icon memory icon_) {
-        uint256 totalWeight_;
-        for (uint256 i_ = 0; i_ < _iconMetadata.length; i_++) {
-            totalWeight_ += uint256(_iconMetadata[i_].weight);
-            if (seed_ < (uint256(int256(-1)) / 100) * totalWeight_) {
-                bytes memory data_ = _read(bytes32(keccak256(abi.encode(i_ + MEMORY_OFFSET))));
-
-                icon_ = abi.decode(ZLib(_zlib).inflate(data_, _iconMetadata[i_].decompressedSize), (Icon));
-
-                return icon_;
-            }
-        }
-
-        // TODO abort
-    }
-
-    function _weightedRarityGenerator(ValueTrait[] memory traits_, uint256 seed_)
-        private
-        pure
-        returns (string memory trait_)
-    {
-        uint256 totalWeight_ = 0;
-        for (uint256 i_ = 0; i_ < traits_.length; i_++) {
-            totalWeight_ += traits_[i_].weight;
-            if (seed_ < (uint256(int256(-1)) / 100) * totalWeight_) {
-                return traits_[i_].value;
-            }
-        }
-
-        trait_ = traits_[traits_.length - 1].value;
     }
 }
