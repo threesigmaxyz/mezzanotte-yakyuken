@@ -195,7 +195,7 @@ contract YakyukenTests is Test {
     }
 
     function test_process_bytes_info() external {
-        bytes memory info_ = hex"07103346649A44";
+        bytes memory info_ = hex"07103346642311";
         Yakyuken.MetadataBytes memory result = _yakyuken.processMetadataAsBytes(info_);
         assertEq(result.glowTimes, 7);
         assertEq(result.backgroundColors, 16);
@@ -205,11 +205,19 @@ contract YakyukenTests is Test {
         assertEq(result.yakFillColors, 6);
         assertEq(result.yak, 6);
         assertEq(result.initialShadowColors, 4);
-        assertEq(result.initialShadowBrightness, 9);
-        assertEq(result.finalShadowBrightness, 10);
-        assertEq(result.icon, 4);
-        assertEq(result.texts, 4);
+        assertEq(result.initialShadowBrightness, 2);
+        assertEq(result.finalShadowBrightness, 3);
+        assertEq(result.icon, 1);
+        assertEq(result.texts, 1);
     }
+
+    function test_generate_from_bytes_data() external {
+        bytes memory info_ = hex"07103346642311";
+        uint16 tokenId_ = 10;
+        string memory svg_ = _yakyuken.generateSVGfromBytes(info_);
+        vm.writeFile(string.concat(string.concat("test/outNew/", vm.toString(tokenId_)), ".svg"), svg_);
+    }
+
     /*function test_metadata() external {
         for (uint256 i_; i_ < 10; i_++) {
             string memory svg_ = _yakyuken.readSVG(i_);

@@ -12,6 +12,7 @@ import { ZLib } from "./zip/ZLib.sol";
 
 contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
     using Strings for uint256;
+
     event LogBytes(bytes1 point);
 
     bytes32 private constant METADATA_POINTER = bytes32(keccak256("metadata"));
@@ -89,6 +90,8 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
 
     event LogResult(MetadataBytes result);
 
+    error OutOfBondsTraitValueError(string trait);
+
     constructor(address zlib_) ERC721("Yakyuken", "YNFT") Ownable(msg.sender) {
         _zlib = zlib_;
     }
@@ -132,29 +135,108 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
         return string(abi.encodePacked("data:application/json;base64,", Base64.encode(dataURI)));
     }
 
-    function generateSVGfromBytes(bytes memory metadataInfo_ ) public{
+    function generateSVGfromBytes(bytes memory metadataInfo_) public returns (string memory svg_) {
         MetadataBytes memory data_ = processMetadataAsBytes(metadataInfo_);
+        svg_ = string(_generateSVGfromBytesData(data_));
     }
 
     function readSVG(uint256 tokenId_) external view returns (string memory svg_) {
         svg_ = string(_readSVG(tokenId_));
     }
 
-    function processMetadataAsBytes(bytes memory metadataInfo_) public returns(MetadataBytes memory data_){
-        data_.glowTimes = uint8(metadataInfo_[0]); // 7
-        data_.backgroundColors = uint8(metadataInfo_[1]); // 16
-        data_.yakHoverColors  = uint8(metadataInfo_[2] >> 4); // 3
-        data_.finalShadowColors = uint8(metadataInfo_[2] & 0x0F); // 3
-        data_.baseFillColors  = uint8(metadataInfo_[3] >> 4); // 4
-        data_.yakFillColors  = uint8(metadataInfo_[3] & 0x0F); // 4
-        data_.yak = uint8(metadataInfo_[4] >> 4); // 6
-        data_.initialShadowColors = uint8(metadataInfo_[4] & 0x0F); // 6
-        data_.initialShadowBrightness = uint8(metadataInfo_[5] >> 4); // 9
-        data_.finalShadowBrightness = uint8(metadataInfo_[5] & 0x0F); // 9
-        data_.icon = uint8(metadataInfo_[6] >> 4); // 4
-        data_.texts = uint8(metadataInfo_[6] & 0x0F); // 4
+    function processMetadataAsBytes(bytes memory metadataInfo_) public returns (MetadataBytes memory data_) {
+        Metadata memory metadata_ = abi.decode(_read(METADATA_POINTER), (Metadata));
+
+        data_.glowTimes = uint8(metadataInfo_[0]);
+        if (data_.glowTimes > metadata_.glowTimes.length) revert OutOfBondsTraitValueError("glowTimes");
+
+        data_.backgroundColors = uint8(metadataInfo_[1]);
+        if (data_.backgroundColors > metadata_.backgroundColors.length) {
+            revert OutOfBondsTraitValueError("backgroundColors");
+        }
+
+        data_.yakHoverColors = uint8(metadataInfo_[2] >> 4);
+        if (data_.yakHoverColors > metadata_.yakHoverColors.length) revert OutOfBondsTraitValueError("yakHoverColors");
+
+        data_.finalShadowColors = uint8(metadataInfo_[2] & 0x0F);
+        if (data_.finalShadowColors > metadata_.finalShadowColors.length) {
+            revert OutOfBondsTraitValueError("finalShadowColors");
+        }
+
+        data_.baseFillColors = uint8(metadataInfo_[3] >> 4);
+        if (data_.baseFillColors > metadata_.baseFillColors.length) revert OutOfBondsTraitValueError("baseFillColors");
+
+        data_.yakFillColors = uint8(metadataInfo_[3] & 0x0F);
+        if (data_.yakFillColors > metadata_.yakFillColors.length) revert OutOfBondsTraitValueError("yakFillColors");
+
+        data_.yak = uint8(metadataInfo_[4] >> 4);
+        if (data_.yak > _imageMetadata.length) revert OutOfBondsTraitValueError("yak/character");
+
+        data_.initialShadowColors = uint8(metadataInfo_[4] & 0x0F);
+        if (data_.initialShadowColors > metadata_.initialShadowColors.length) {
+            revert OutOfBondsTraitValueError("initialShadowColors");
+        }
+
+        data_.initialShadowBrightness = uint8(metadataInfo_[5] >> 4);
+        if (data_.initialShadowBrightness > metadata_.initialShadowBrightness.length) {
+            revert OutOfBondsTraitValueError("initialShadowBrightness");
+        }
+
+        data_.finalShadowBrightness = uint8(metadataInfo_[5] & 0x0F);
+        if (data_.finalShadowBrightness > metadata_.finalShadowBrightness.length) {
+            revert OutOfBondsTraitValueError("finalShadowBrightness");
+        }
+
+        data_.icon = uint8(metadataInfo_[6] >> 4);
+        if (data_.icon > _iconMetadata.length) revert OutOfBondsTraitValueError("icon");
+
+        data_.texts = uint8(metadataInfo_[6] & 0x0F);
+        if (data_.texts > metadata_.texts.length) revert OutOfBondsTraitValueError("texts");
 
         emit LogResult(data_);
+    }
+
+    function _generateSVGfromBytesData(MetadataBytes memory data_) internal view returns (bytes memory) {
+        Metadata memory metadata_ = abi.decode(_read(METADATA_POINTER), (Metadata));
+        uint16 tokenId_ = 10;
+
+        Image memory image_ = abi.decode(
+            ZLib(_zlib).inflate(
+                _read(bytes32(keccak256(abi.encode(data_.yak)))), _imageMetadata[data_.yak].decompressedSize
+            ),
+            (Image)
+        );
+
+        Icon memory icon_ = abi.decode(
+            ZLib(_zlib).inflate(
+                _read(bytes32(keccak256(abi.encode(data_.icon + MEMORY_OFFSET)))),
+                _iconMetadata[data_.icon].decompressedSize
+            ),
+            (Icon)
+        );
+
+        return abi.encodePacked(
+            _getHeader(image_.viewBox, metadata_.backgroundColors[data_.backgroundColors].value),
+            _getStyleHeader(
+                metadata_.initialShadowColors[data_.initialShadowColors].value,
+                metadata_.finalShadowColors[data_.finalShadowColors].value,
+                metadata_.initialShadowBrightness[data_.initialShadowBrightness].value,
+                metadata_.finalShadowBrightness[data_.finalShadowBrightness].value,
+                metadata_.baseFillColors[data_.baseFillColors].value,
+                metadata_.glowTimes[data_.glowTimes].value,
+                metadata_.yakFillColors[data_.yakFillColors].value,
+                metadata_.yakHoverColors[data_.yakHoverColors].value,
+                icon_.color
+            ),
+            image_.path,
+            _getIcon(icon_.path, image_.iconSize),
+            _getHoverText(
+                _weightedRarityGenerator(metadata_.texts, uint256(keccak256(abi.encodePacked(tokenId_, "t")))),
+                image_.fontSize,
+                _weightedRarityGenerator(metadata_.textLocations, uint256(keccak256(abi.encodePacked(tokenId_, "tl"))))
+            ),
+            "</svg>"
+        );
     }
 
     function _readSVG(uint256 tokenId_) internal view returns (bytes memory) {
