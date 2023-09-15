@@ -158,8 +158,10 @@ contract YakyukenTests is Test {
         (icons_[2], decompressedSizesIcons_[2]) = _loadIcon("/svgPaths/icon/abstract.svg", "Abstract", "black", 10);
         (icons_[3], decompressedSizesIcons_[3]) = _loadIcon("/svgPaths/icon/empty.svg", "None", "transparent", 75);
         //Yakyuken.Metadata memory metadata_ = Yakyuken.Metadata({});
-
-        _yakyuken.initialize(metadataDetails_, images_, decompressedSizes_, icons_, decompressedSizesIcons_);
+        bytes memory info_ = hex"07103346642311"; // example
+        bytes[] memory infoArray_ = new bytes[](1);
+        infoArray_[0] = info_;
+        _yakyuken.initialize(metadataDetails_, images_, decompressedSizes_, icons_, decompressedSizesIcons_, infoArray_);
     }
 
     function test_ok() external {
@@ -213,7 +215,7 @@ contract YakyukenTests is Test {
 
     function test_generate_from_bytes_data() external {
         bytes memory info_ = hex"07103346642311";
-        uint16 tokenId_ = 10;
+        uint16 tokenId_ = 0;
         string memory svg_ = _yakyuken.generateSVGfromBytes(info_);
         vm.writeFile(string.concat(string.concat("test/outNew/", vm.toString(tokenId_)), ".svg"), svg_);
     }

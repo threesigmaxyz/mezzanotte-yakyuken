@@ -19,6 +19,7 @@ contract Deploy is Script {
     bytes[] private _icons = new bytes[](4);
     uint128[] private _decompressedSizesIcons = new uint128[](4);
     bytes private _metadataDetails;
+    bytes[] private _infoArray;
 
     function setUp() public {
         // Read JSON config data.
@@ -31,7 +32,7 @@ contract Deploy is Script {
         // TODO Yakyuken.Metadata memory metadata_ = abi.decode(metadataDetails_, (Yakyuken.Metadata));
 
         // Load SVG files.
-        (_images[0], _decompressedSizes[0]) = _loadImage(
+        /*(_images[0], _decompressedSizes[0]) = _loadImage(
             "/svgPaths/yak/ami.svg", "0 0 300 500", "0", "width=\"50px\" height=\"50px\" viewbox=\"0 0 50 50\"", "Ami"
         );
         (_images[1], _decompressedSizes[1]) = _loadImage(
@@ -96,7 +97,7 @@ contract Deploy is Script {
             "0",
             "width=\"100.00px\" height=\"100.00px\" viewbox=\"10.551 0.897 786.819 630.439\"",
             "FocusedGirl"
-        );
+        ); */
 
         (_icons[0], _decompressedSizesIcons[0]) = _loadIcon("/svgPaths/icon/stars.svg", "Stars", "yellow", 10);
         (_icons[1], _decompressedSizesIcons[1]) = _loadIcon("/svgPaths/icon/scribble.svg", "Scribble", "red", 5);
@@ -108,6 +109,8 @@ contract Deploy is Script {
         //(_images[6], _decompressedSizes[6]) = _loadImage("/svgPaths/v3/josei.svg", "0 0 300 500", "36", "Josei");
         //(_images[6], _decompressedSizes[6]) = _loadImage("/svgPaths/v3/redlady.svg", "0 0 300 500", "36", "Red Lady");
         //(_images[7], _decompressedSizes[7]) = _loadImage("/svgPaths/v3/sport.svg", "0 0 300 500", "36", "Sport");
+        bytes memory info_ = hex"07103346642311"; // example
+        _infoArray[0] = info_;
     }
 
     /// @dev You can send multiple transactions inside a single script.
@@ -118,7 +121,7 @@ contract Deploy is Script {
         Yakyuken _yakyuken = new Yakyuken(address(new ZLib()));
 
         // Deploy SVG files.
-        _yakyuken.initialize(_metadataDetails, _images, _decompressedSizes, _icons, _decompressedSizesIcons);
+        _yakyuken.initialize(_metadataDetails, _images, _decompressedSizes, _icons, _decompressedSizesIcons, _infoArray);
 
         vm.stopBroadcast();
     }

@@ -23,6 +23,7 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
 
     ImageMetadata[] private _imageMetadata;
     IconMetadata[] private _iconMetadata;
+    bytes[] private _imageTraits;
 
     string public ICON_LOCATION = "TBD";
 
@@ -88,8 +89,6 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
         ValueTrait[] yakHoverColors;
     }
 
-    event LogResult(MetadataBytes result);
-
     error OutOfBondsTraitValueError(string trait);
 
     constructor(address zlib_) ERC721("Yakyuken", "YNFT") Ownable(msg.sender) {
@@ -102,7 +101,8 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
         bytes[] calldata images_,
         uint128[] calldata decompressedSizes_,
         bytes[] calldata icons_,
-        uint128[] calldata decompressedSizesIcons_
+        uint128[] calldata decompressedSizesIcons_,
+        bytes[] memory imageTraits_
     ) external {
         _write(METADATA_POINTER, metadata_);
 
@@ -117,6 +117,8 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
             _write(bytes32(keccak256(abi.encode(j_ + MEMORY_OFFSET))), icons_[j_]);
             _iconMetadata.push(IconMetadata(decompressedSizesIcons_[j_], uint128(100 / icons_.length))); // TODO pass as init argument
         }
+
+        _imageTraits = imageTraits_;
     }
 
     function tokenURI(uint256 tokenId_) public view override returns (string memory) {
@@ -127,7 +129,11 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
             '", "description": "',
             "Yakyuken NFT on-chain collection.",
             '", "image_data": "',
-            string(abi.encodePacked("data:image/svg+xml;base64,", Base64.encode(_readSVG(tokenId_)))),
+            string(
+                abi.encodePacked(
+                    "data:image/svg+xml;base64,", Base64.encode(_generateSVGfromBytes(_imageTraits[tokenId_]))
+                )
+            ),
             '"',
             "}"
         );
@@ -135,16 +141,15 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
         return string(abi.encodePacked("data:application/json;base64,", Base64.encode(dataURI)));
     }
 
-    function generateSVGfromBytes(bytes memory metadataInfo_) public returns (string memory svg_) {
-        MetadataBytes memory data_ = processMetadataAsBytes(metadataInfo_);
-        svg_ = string(_generateSVGfromBytesData(data_));
+    function generateSVGfromBytes(bytes memory metadataInfo_) external view returns (string memory svg_) {
+        svg_ = string(_generateSVGfromBytes(metadataInfo_));
     }
 
     function readSVG(uint256 tokenId_) external view returns (string memory svg_) {
         svg_ = string(_readSVG(tokenId_));
     }
 
-    function processMetadataAsBytes(bytes memory metadataInfo_) public returns (MetadataBytes memory data_) {
+    function processMetadataAsBytes(bytes memory metadataInfo_) public view returns (MetadataBytes memory data_) {
         Metadata memory metadata_ = abi.decode(_read(METADATA_POINTER), (Metadata));
 
         data_.glowTimes = uint8(metadataInfo_[0]);
@@ -192,13 +197,11 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
 
         data_.texts = uint8(metadataInfo_[6] & 0x0F);
         if (data_.texts > metadata_.texts.length) revert OutOfBondsTraitValueError("texts");
-
-        emit LogResult(data_);
     }
 
-    function _generateSVGfromBytesData(MetadataBytes memory data_) internal view returns (bytes memory) {
+    function _generateSVGfromBytes(bytes memory metadataInfo_) internal view returns (bytes memory) {
+        MetadataBytes memory data_ = processMetadataAsBytes(metadataInfo_);
         Metadata memory metadata_ = abi.decode(_read(METADATA_POINTER), (Metadata));
-        uint16 tokenId_ = 10;
 
         Image memory image_ = abi.decode(
             ZLib(_zlib).inflate(
@@ -230,11 +233,6 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
             ),
             image_.path,
             _getIcon(icon_.path, image_.iconSize),
-            _getHoverText(
-                _weightedRarityGenerator(metadata_.texts, uint256(keccak256(abi.encodePacked(tokenId_, "t")))),
-                image_.fontSize,
-                _weightedRarityGenerator(metadata_.textLocations, uint256(keccak256(abi.encodePacked(tokenId_, "tl"))))
-            ),
             "</svg>"
         );
     }
