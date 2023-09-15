@@ -50,14 +50,28 @@ contract YakyukenTests is Test {
         bytes[] memory images_ = new bytes[](8);
         uint128[] memory decompressedSizes_ = new uint128[](8);
         (images_[0], decompressedSizes_[0]) = _loadImage(
-            "/svgPaths/yak/ami.svg", "0 0 300 500", "0", "width=\"50px\" height=\"50px\" viewbox=\"0 0 50 50\"", "Ami"
+            "/svgPaths/yak/ami.svg", "0 0 300 500", "0", "width=\"50px\" height=\"50px\" viewbox=\"0 0 50 50\"", "ami"
         );
         (images_[1], decompressedSizes_[1]) = _loadImage(
             "/svgPaths/yak/christine.svg",
             "0 0 500 470",
             "0",
             "width=\"100px\" height=\"100px\" viewbox=\"0 0 100 100\"",
-            "Christine"
+            "christine"
+        );
+        (images_[2], decompressedSizes_[2]) = _loadImage(
+            "/svgPaths/yak/yak2.svg",
+            "0 0 230 300",
+            "0",
+            "width=\"50px\" height=\"50px\" viewbox=\"0 0 100 100\"",
+            "yak2"
+        );
+        (images_[3], decompressedSizes_[3]) = _loadImage(
+            "/svgPaths/yak/focusedgirl.svg",
+            "10.551 0.897 786.819 630.439",
+            "0",
+            "width=\"100.00px\" height=\"100.00px\" viewbox=\"10.551 0.897 786.819 630.439\"",
+            "focusedgirl"
         );
         (images_[4], decompressedSizes_[4]) = _loadImage(
             "/svgPaths/yak/takechi.svg",
@@ -89,20 +103,6 @@ contract YakyukenTests is Test {
             "width=\"200px\" height=\"200px\" viewbox=\"0 0 200 200\"",
             "Tennis"
         );
-        (images_[2], decompressedSizes_[2]) = _loadImage(
-            "/svgPaths/yak/yak2.svg",
-            "0 0 230 300",
-            "0",
-            "width=\"50px\" height=\"50px\" viewbox=\"0 0 100 100\"",
-            "Yak2"
-        );
-        (images_[3], decompressedSizes_[3]) = _loadImage(
-            "/svgPaths/yak/focusedgirl.svg",
-            "10.551 0.897 786.819 630.439",
-            "0",
-            "width=\"100.00px\" height=\"100.00px\" viewbox=\"10.551 0.897 786.819 630.439\"",
-            "FocusedGirl"
-        );
         //NOTE: currently these two images are too big to be compressed
         /*
         (images_[2], decompressedSizes_[2]) = _loadImage(
@@ -121,10 +121,10 @@ contract YakyukenTests is Test {
         );*/
         bytes[] memory icons_ = new bytes[](4);
         uint128[] memory decompressedSizesIcons_ = new uint128[](4);
-        (icons_[0], decompressedSizesIcons_[0]) = _loadIcon("/svgPaths/icon/stars.svg", "Stars", "yellow", 10);
-        (icons_[1], decompressedSizesIcons_[1]) = _loadIcon("/svgPaths/icon/scribble.svg", "Scribble", "red", 5);
-        (icons_[2], decompressedSizesIcons_[2]) = _loadIcon("/svgPaths/icon/abstract.svg", "Abstract", "black", 10);
-        (icons_[3], decompressedSizesIcons_[3]) = _loadIcon("/svgPaths/icon/empty.svg", "None", "transparent", 75);
+        (icons_[0], decompressedSizesIcons_[0]) = _loadIcon("/svgPaths/icon/stars.svg", "stars", "yellow", 10);
+        (icons_[1], decompressedSizesIcons_[1]) = _loadIcon("/svgPaths/icon/scribble.svg", "scribble", "red", 5);
+        (icons_[2], decompressedSizesIcons_[2]) = _loadIcon("/svgPaths/icon/abstract.svg", "abstract", "black", 10);
+        (icons_[3], decompressedSizesIcons_[3]) = _loadIcon("/svgPaths/icon/empty.svg", "none", "transparent", 75);
         //Yakyuken.Metadata memory metadata_ = Yakyuken.Metadata({});
         bytes memory info_ = hex"07103346642311"; // example
         bytes[] memory infoArray_ = new bytes[](1);
