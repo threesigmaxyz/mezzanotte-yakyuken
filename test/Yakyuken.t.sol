@@ -19,6 +19,12 @@ contract YakyukenTests is Test {
     Yakyuken private _yakyuken;
     Yakyuken.Metadata metadata;
 
+    struct ByteRepresentation {
+        uint256 tokenId;
+        string value;
+    }
+
+
     Yakyuken.ValueTrait[] public bckColors;
     Yakyuken.ValueTrait[] public bFillColors;
     Yakyuken.ValueTrait[] public initialShCol;
@@ -35,6 +41,8 @@ contract YakyukenTests is Test {
     error DifferentValueError(string vl1, string vl2, string loc);
     error DifferentWeightError(uint256 vl1, uint256 vl2, string loc);
 
+    event LogBytes(bytes output);
+
     function setUp() external {
         _setUpArrays();
 
@@ -47,8 +55,8 @@ contract YakyukenTests is Test {
         bytes memory metadataDetails_ = configData_.parseRaw(".metadata");
 
         //Yakyuken.Metadata memory metadata_ = abi.decode(metadataDetails_, (Yakyuken.Metadata));
-        bytes[] memory images_ = new bytes[](8);
-        uint128[] memory decompressedSizes_ = new uint128[](8);
+        bytes[] memory images_ = new bytes[](10);
+        uint128[] memory decompressedSizes_ = new uint128[](10);
         (images_[0], decompressedSizes_[0]) = _loadImage(
             "/svgPaths/yak/ami.svg", "0 0 300 500", "0", "width=\"50px\" height=\"50px\" viewbox=\"0 0 50 50\"", "ami"
         );
@@ -105,19 +113,21 @@ contract YakyukenTests is Test {
         );
         //NOTE: currently these two images are too big to be compressed
         /*
-        (images_[2], decompressedSizes_[2]) = _loadImage(
+        (images_[8], decompressedSizes_[8]) = _loadImageHardcoded(
             "/svgPaths/yak/redlady.svg",
             "0 0 1000 600",
             "0",
             "width=\"100px\" height=\"100px\" viewbox=\"0 0 100 100\"",
-            "RedLady"
+            "RedLady",
+            "/svgPaths/yak/redlady_compressed.txt"
         );
-        (images_[3], decompressedSizes_[3]) = _loadImage(
+        (images_[9], decompressedSizes_[9]) = _loadImageHardcoded(
             "/svgPaths/yak/josei.svg",
             "0 0 1000 600",
             "0",
             "width=\"100px\" height=\"100px\" viewbox=\"0 0 100 100\"",
-            "Josei"
+            "Josei",
+            "/svgPaths/yak/josei_compressed.txt"
         );*/
         bytes[] memory icons_ = new bytes[](4);
         uint128[] memory decompressedSizesIcons_ = new uint128[](4);
@@ -126,18 +136,44 @@ contract YakyukenTests is Test {
         (icons_[2], decompressedSizesIcons_[2]) = _loadIcon("/svgPaths/icon/abstract.svg", "abstract", "black", 10);
         (icons_[3], decompressedSizesIcons_[3]) = _loadIcon("/svgPaths/icon/empty.svg", "none", "transparent", 75);
         //Yakyuken.Metadata memory metadata_ = Yakyuken.Metadata({});
-        bytes memory info_ = hex"07103346642311"; // example
-        bytes[] memory infoArray_ = new bytes[](1);
-        infoArray_[0] = info_;
+        
+        ByteRepresentation[] memory nftInBytes_;
+
+        string memory inputPath_ = string.concat(root_, "/test/byteRepresentation.json");
+        string memory inputData_ = vm.readFile(inputPath_);
+        bytes memory bytesData_ = inputData_.parseRaw(".");
+        nftInBytes_ = abi.decode(bytesData_, (ByteRepresentation[]));
+        bytes[] memory infoArray_ = new bytes[](nftInBytes_.length);
+
+        for(uint256 i_ = 0; i_ < infoArray_.length; i_++){
+            infoArray_[nftInBytes_[i_].tokenId] = bytes(nftInBytes_[i_].value);
+        }
+
         _yakyuken.initialize(metadataDetails_, images_, decompressedSizes_, icons_, decompressedSizesIcons_, infoArray_);
     }
 
     function test_ok() external {
-        uint128 maxToken_ = 1;
+        
+        uint128 maxToken_ = 10;
         for (uint128 tokenId_ = 0; tokenId_ < maxToken_; tokenId_++) {
             string memory svg_ = _yakyuken.generateSVGfromBytes(tokenId_);
             vm.writeFile(string.concat(string.concat("test/out/", vm.toString(tokenId_)), ".svg"), svg_);
         }
+    }
+
+    function test_read_file() external view{
+        ByteRepresentation[] memory nftInBytes_;
+        string memory root_ = vm.projectRoot();
+
+        string memory inputPath_ = string.concat(root_, "/test/byteRepresentation.json");
+        string memory inputData_ = vm.readFile(inputPath_);
+        bytes memory bytesData_ = inputData_.parseRaw(".");
+        nftInBytes_ = abi.decode(bytesData_, (ByteRepresentation[]));
+        bytes[] memory infoArray_ = new bytes[](nftInBytes_.length);
+        for(uint256 i_ = 0; i_ < infoArray_.length; i_++){
+            infoArray_[nftInBytes_[i_].tokenId] = bytes(nftInBytes_[i_].value);
+        }
+
     }
 
     function test_read_traits() external view {
@@ -364,6 +400,21 @@ contract YakyukenTests is Test {
     ) internal returns (bytes memory compressedImage_, uint128 decompressedSize_) {
         bytes memory image_ = abi.encode(Yakyuken.Image(_loadSVG(path_), viewBox_, fontSize_, iconSize_, name_));
         compressedImage_ = ZipUtils.zip(image_);
+        decompressedSize_ = uint128(image_.length);
+    }
+
+    function _loadImageHardcoded(
+        string memory path_,
+        string memory viewBox_,
+        string memory fontSize_,
+        string memory iconSize_,
+        string memory name_,
+        string memory hardcodedLocation_
+    ) internal view returns (bytes memory compressedImage_, uint128 decompressedSize_) {
+        string memory root_ = vm.projectRoot();
+        string memory realLocation_ = string.concat(root_, hardcodedLocation_);
+        compressedImage_ = bytes(vm.readFile(realLocation_));
+        bytes memory image_ = abi.encode(Yakyuken.Image(_loadSVG(path_), viewBox_, fontSize_, iconSize_, name_));
         decompressedSize_ = uint128(image_.length);
     }
 
