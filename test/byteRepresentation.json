@@ -1,42 +1,202 @@
 [
     {
         "tokenId": 0,
-        "value": "0x0608316a934431"
+        "value": "0x0506a018754430"
     },
     {
         "tokenId": 1,
-        "value": "0x06026788734431"
+        "value": "0x0e045007972230"
+    },
+    {
+        "tokenId": 10,
+        "value": "0x090b50a3854432"
+    },
+    {
+        "tokenId": 11,
+        "value": "0x09061274733112"
+    },
+    {
+        "tokenId": 12,
+        "value": "0x06064542970332"
+    },
+    {
+        "tokenId": 13,
+        "value": "0x03092893370400"
+    },
+    {
+        "tokenId": 14,
+        "value": "0x12071431743430"
+    },
+    {
+        "tokenId": 15,
+        "value": "0x0206b456862112"
+    },
+    {
+        "tokenId": 16,
+        "value": "0x03097936171332"
+    },
+    {
+        "tokenId": 17,
+        "value": "0x1106b087114330"
+    },
+    {
+        "tokenId": 18,
+        "value": "0x02075912672430"
+    },
+    {
+        "tokenId": 19,
+        "value": "0x0c075096673031"
     },
     {
         "tokenId": 2,
-        "value": "0x020a6435154431"
+        "value": "0x03047458010032"
+    },
+    {
+        "tokenId": 20,
+        "value": "0x06083675543431"
+    },
+    {
+        "tokenId": 21,
+        "value": "0x0a085569960031"
+    },
+    {
+        "tokenId": 22,
+        "value": "0x0608a581771410"
+    },
+    {
+        "tokenId": 23,
+        "value": "0x02006144712132"
+    },
+    {
+        "tokenId": 24,
+        "value": "0x11074459823131"
+    },
+    {
+        "tokenId": 25,
+        "value": "0x05096897150230"
+    },
+    {
+        "tokenId": 26,
+        "value": "0x0e022b4a650030"
+    },
+    {
+        "tokenId": 27,
+        "value": "0x02003b1a670032"
+    },
+    {
+        "tokenId": 28,
+        "value": "0x0303a083253331"
+    },
+    {
+        "tokenId": 29,
+        "value": "0x02096313770431"
     },
     {
         "tokenId": 3,
-        "value": "0x10089273754432"
+        "value": "0x0e000074632130"
+    },
+    {
+        "tokenId": 30,
+        "value": "0x100a9002750412"
+    },
+    {
+        "tokenId": 31,
+        "value": "0x0a096788711431"
+    },
+    {
+        "tokenId": 32,
+        "value": "0x02067aa8671002"
+    },
+    {
+        "tokenId": 33,
+        "value": "0x060d7874453331"
+    },
+    {
+        "tokenId": 34,
+        "value": "0x0a074152451131"
+    },
+    {
+        "tokenId": 35,
+        "value": "0x0607b75a744132"
+    },
+    {
+        "tokenId": 36,
+        "value": "0x09066834424431"
+    },
+    {
+        "tokenId": 37,
+        "value": "0x000baa34912402"
+    },
+    {
+        "tokenId": 38,
+        "value": "0x060400a4304201"
+    },
+    {
+        "tokenId": 39,
+        "value": "0x0c004925774332"
     },
     {
         "tokenId": 4,
-        "value": "0x06090168654431"
+        "value": "0x020a0a57700200"
+    },
+    {
+        "tokenId": 40,
+        "value": "0x0600cb58643130"
+    },
+    {
+        "tokenId": 41,
+        "value": "0x12046411970132"
+    },
+    {
+        "tokenId": 42,
+        "value": "0x020935a9613021"
+    },
+    {
+        "tokenId": 43,
+        "value": "0x0605ba82521132"
+    },
+    {
+        "tokenId": 44,
+        "value": "0x030110a0842231"
+    },
+    {
+        "tokenId": 45,
+        "value": "0x090b3a91922330"
+    },
+    {
+        "tokenId": 46,
+        "value": "0x01095035133032"
+    },
+    {
+        "tokenId": 47,
+        "value": "0x020d3664554232"
+    },
+    {
+        "tokenId": 48,
+        "value": "0x00012734751132"
+    },
+    {
+        "tokenId": 49,
+        "value": "0x020b5478444131"
     },
     {
         "tokenId": 5,
-        "value": "0x0a0a1350054402"
+        "value": "0x050b0846174430"
     },
     {
         "tokenId": 6,
-        "value": "0x0f0c8484374421"
+        "value": "0x0006aba4614021"
     },
     {
         "tokenId": 7,
-        "value": "0x0a067171654430"
+        "value": "0x0e0b8418554132"
     },
     {
         "tokenId": 8,
-        "value": "0x00083756614432"
+        "value": "0x0b08377a702331"
     },
     {
         "tokenId": 9,
-        "value": "0x0d049632734401"
+        "value": "0x06060414652030"
     }
 ]

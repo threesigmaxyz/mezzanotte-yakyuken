@@ -219,6 +219,40 @@ contract YakyukenTests is Test {
         vm.writeFile(string.concat(string.concat("test/out/", vm.toString(tokenId_)), ".svg"), svg_);
     }
 
+    function test_compare_output() external {
+        uint128 maxToken_ = 50;
+        for (uint128 tokenId_ = 0; tokenId_ < maxToken_; tokenId_++) {
+            _compareOutputFromId(tokenId_);
+        }
+    }
+
+    function _compareOutputFromId(uint256 currentTokenId_) internal {
+        string memory contractPathFile_ = string.concat(string.concat("test/out/", vm.toString(currentTokenId_)), ".svg");
+        
+        // Fetch generated svg with the contract code
+        string memory contractSvg_ = _yakyuken.generateSVGfromBytes(currentTokenId_);
+        vm.writeFile(contractPathFile_, contractSvg_);
+
+        // Fetch generated svg with the svg generator
+        string memory pythonPathFile_ =
+            string.concat(string.concat("test/python-generated-svg/", currentTokenId_.toString()), ".svg");
+
+        // Prepare output to run script
+        string[] memory inputs = new string[](4);
+        inputs[0] = "node";
+        inputs[1] = "test/compareStrings.js";
+        inputs[2] = contractPathFile_;
+        inputs[3] = pythonPathFile_;
+
+        // Run script
+        bytes memory res = vm.ffi(inputs);
+
+        // Assert outputd
+        assertEq(string(res), "true");
+        
+    }
+    
+
     function _setUpArrays() internal {
         //Note: decided to hardcode the expected results so it is a different method than reading from the json file
 

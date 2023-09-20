@@ -258,7 +258,7 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
             baseFillColors_,
             ";animation: glow ",
             glowTimes_,
-            "s ease-in-out infinite alternate}.yak {fill: ",
+            "s ease-in-out infinite alternate;}.yak {fill: ",
             yakFillColors_,
             ";}.yak:hover {fill: ",
             hoverColors_,
