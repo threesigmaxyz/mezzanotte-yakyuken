@@ -2,8 +2,6 @@
 // TODO pragma solidity ^0.8.20;
 pragma solidity ^0.8.0;
 
-import { console2 } from "@forge-std/console2.sol";
-
 /// @notice Solidity implementation of zlib deflate.
 /// @dev Optimistic form of:
 ///      https://github.com/adlerjohn/inflate-sol/blob/2a88141f5226da9d0252be4a456a2e0b23ba3d0e/contracts/InflateLib.sol
@@ -437,7 +435,6 @@ contract ZLib {
 
     function inflate(bytes calldata, /* input */ uint256 outputSize) external pure returns (bytes memory) {
         // Input/output state
-        console2.log("in");
         State memory s = State({
             output: new bytes(outputSize),
             outcnt: 0,
@@ -516,7 +513,6 @@ contract ZLib {
             CODES_DEXTS: [0, 0, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13],
             BUILD_DYNAMIC_LENGTHS_ORDER: [16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15]
         });
-        console2.log("first step");
         // Temp: last bit
         uint256 last;
         // Temp: block type bit
@@ -524,36 +520,25 @@ contract ZLib {
 
         // Build fixed Huffman tables
         _build_fixed(s);
-        console2.log("second step");
 
         // Process blocks until last block or error
         while (last == 0) {
             // One if last block
-            console2.log("check 1");
             last = _bits(s, 1);
 
             // Block type 0..3
-            console2.log("check 2");
             t = _bits(s, 2);
 
-            console2.log("check 3");
             if (t == 0) {
-                console2.log("check 4");
-
                 _stored(s);
             } else if (t == 1) {
-                console2.log("check 5");
-
                 _fixed(s);
             } else if (t == 2) {
-                console2.log("check 6");
-
                 _dynamic(s);
             } else {
                 revert InvalidBlockTypeError();
             }
         }
-        console2.log("finished");
 
         return s.output;
     }

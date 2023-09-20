@@ -40,8 +40,6 @@ contract YakyukenTests is Test {
     error DifferentValueError(string vl1, string vl2, string loc);
     error DifferentWeightError(uint256 vl1, uint256 vl2, string loc);
 
-    event LogBytes(bytes output);
-
     function setUp() external {
         _setUpArrays();
 
@@ -103,34 +101,24 @@ contract YakyukenTests is Test {
             "Thinker"
         );
 
-        /*(images_[7], decompressedSizes_[7]) = _loadImage(
+        (images_[7], decompressedSizes_[7]) = _loadImage(
             "/svgPaths/yak/tennis.svg",
             "0 0 2000 1300",
             "0",
             "width=\"200px\" height=\"200px\" viewbox=\"0 0 200 200\"",
             "Tennis"
-        );*/
-
-        (images_[7], decompressedSizes_[7]) = _loadImageHardcoded(
-            "/svgPaths/yak/tennis.svg",
-            "0 0 2000 1300",
-            "0",
-            "width=\"200px\" height=\"200px\" viewbox=\"0 0 200 200\"",
-            "Tennis",
-            "/svgPaths/yak/tennis_compressed.txt"
         );
 
-
-        //NOTE: currently these two images are too big to be compressed
-        /*(images_[8], decompressedSizes_[8]) = _loadImageHardcoded(
+        //NOTE: these two images need to be compressed with a different method
+        (images_[8], decompressedSizes_[8]) = _loadImageHardcoded(
             "/svgPaths/yak/redlady.svg",
             "0 0 1000 600",
             "0",
             "width=\"100px\" height=\"100px\" viewbox=\"0 0 100 100\"",
             "RedLady",
             "/svgPaths/yak/redlady_compressed.txt"
-        );*/
-        /*
+        );
+
         (images_[9], decompressedSizes_[9]) = _loadImageHardcoded(
             "/svgPaths/yak/josei.svg",
             "0 0 1000 600",
@@ -138,14 +126,16 @@ contract YakyukenTests is Test {
             "width=\"100px\" height=\"100px\" viewbox=\"0 0 100 100\"",
             "Josei",
             "/svgPaths/yak/josei_compressed.txt"
-        );*/
+        );
+
+        // Icons
         bytes[] memory icons_ = new bytes[](4);
         uint128[] memory decompressedSizesIcons_ = new uint128[](4);
+
         (icons_[0], decompressedSizesIcons_[0]) = _loadIcon("/svgPaths/icon/stars.svg", "stars", "yellow", 10);
         (icons_[1], decompressedSizesIcons_[1]) = _loadIcon("/svgPaths/icon/scribble.svg", "scribble", "red", 5);
         (icons_[2], decompressedSizesIcons_[2]) = _loadIcon("/svgPaths/icon/abstract.svg", "abstract", "black", 10);
         (icons_[3], decompressedSizesIcons_[3]) = _loadIcon("/svgPaths/icon/empty.svg", "none", "transparent", 75);
-        //Yakyuken.Metadata memory metadata_ = Yakyuken.Metadata({});
 
         ByteRepresentation[] memory nftInBytes_;
 
@@ -162,31 +152,8 @@ contract YakyukenTests is Test {
         _yakyuken.initialize(metadataDetails_, images_, decompressedSizes_, icons_, decompressedSizesIcons_, infoArray_);
     }
 
-    function test_get_bytes() external {
-        /*_getBytesOfImage( "/svgPaths/yak/redlady.svg",
-            "0 0 1000 600",
-            "0",
-            "width=\"100px\" height=\"100px\" viewbox=\"0 0 100 100\"",
-            "RedLady.txt");
-
-        _getBytesOfImage(  "/svgPaths/yak/josei.svg",
-            "0 0 1000 600",
-            "0",
-            "width=\"100px\" height=\"100px\" viewbox=\"0 0 100 100\"",
-            "Josei.txt");
-
-
-        _getBytesOfImage(
-            "/svgPaths/yak/tennis.svg",
-            "0 0 2000 1300",
-            "0",
-            "width=\"200px\" height=\"200px\" viewbox=\"0 0 200 200\"",
-            "/tennis.txt"
-        );*/
-    }
-
     function test_ok() external {
-        uint128 maxToken_ = 2;
+        uint128 maxToken_ = 10;
         for (uint128 tokenId_ = 0; tokenId_ < maxToken_; tokenId_++) {
             string memory svg_ = _yakyuken.generateSVGfromBytes(tokenId_);
             vm.writeFile(string.concat(string.concat("test/out/", vm.toString(tokenId_)), ".svg"), svg_);
@@ -444,11 +411,10 @@ contract YakyukenTests is Test {
     ) internal view returns (bytes memory compressedImage_, uint128 decompressedSize_) {
         string memory root_ = vm.projectRoot();
         string memory realLocation_ = string.concat(root_, hardcodedLocation_);
-        compressedImage_ = bytes(vm.readFile(realLocation_));
-        
+        compressedImage_ = fromHex(vm.readFile(realLocation_));
+
         bytes memory image_ = abi.encode(Yakyuken.Image(_loadSVG(path_), viewBox_, fontSize_, iconSize_, name_));
         decompressedSize_ = uint128(image_.length);
-        console2.log(decompressedSize_);
     }
 
     function _getBytesOfImage(
@@ -461,7 +427,7 @@ contract YakyukenTests is Test {
         bytes memory image_ = abi.encode(Yakyuken.Image(_loadSVG(path_), viewBox_, fontSize_, iconSize_, name_));
         string memory result = string.concat("svgPaths/yak/", name_);
         vm.writeFile(result, string(image_));
-        emit LogBytes(image_);
+        console2.logBytes(image_);
     }
 
     function _loadIcon(string memory path_, string memory name_, string memory color_, uint256 weight_)
@@ -471,5 +437,30 @@ contract YakyukenTests is Test {
         bytes memory image_ = abi.encode(Yakyuken.Icon(color_, name_, _loadSVG(path_), weight_));
         compressedImage_ = ZipUtils.zip(image_);
         decompressedSize_ = uint128(image_.length);
+    }
+
+    // Convert an hexadecimal character to their value
+    function fromHexChar(uint8 c) public pure returns (uint8) {
+        if (bytes1(c) >= bytes1("0") && bytes1(c) <= bytes1("9")) {
+            return c - uint8(bytes1("0"));
+        }
+        if (bytes1(c) >= bytes1("a") && bytes1(c) <= bytes1("f")) {
+            return 10 + c - uint8(bytes1("a"));
+        }
+        if (bytes1(c) >= bytes1("A") && bytes1(c) <= bytes1("F")) {
+            return 10 + c - uint8(bytes1("A"));
+        }
+        revert("fail");
+    }
+
+    // Convert an hexadecimal string to raw bytes
+    function fromHex(string memory s) public pure returns (bytes memory) {
+        bytes memory ss = bytes(s);
+        require(ss.length % 2 == 0); // length must be even
+        bytes memory r = new bytes(ss.length/2);
+        for (uint256 i = 0; i < ss.length / 2; ++i) {
+            r[i] = bytes1(fromHexChar(uint8(ss[2 * i])) * 16 + fromHexChar(uint8(ss[2 * i + 1])));
+        }
+        return r;
     }
 }

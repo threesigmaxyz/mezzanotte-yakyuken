@@ -193,12 +193,8 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
         MetadataBytes memory data_ = processMetadataAsBytes(metadataInfo_);
         Metadata memory metadata_ = abi.decode(_read(METADATA_POINTER), (Metadata));
 
-        Image memory image_ = abi.decode(
-            ZLib(_zlib).inflate(
-                _read(bytes32(keccak256(abi.encode(data_.yak)))), _imageMetadata[data_.yak].decompressedSize
-            ),
-            (Image)
-        );
+        bytes memory a = _read(bytes32(keccak256(abi.encode(data_.yak))));
+        Image memory image_ = abi.decode(ZLib(_zlib).inflate(a, _imageMetadata[data_.yak].decompressedSize), (Image));
 
         Icon memory icon_ = abi.decode(
             ZLib(_zlib).inflate(

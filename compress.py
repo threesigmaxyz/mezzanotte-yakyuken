@@ -9,13 +9,3 @@ args = arg_parser.parse_args()
 input = bytes.fromhex(args.data if not args.data.startswith('0x') else args.data[2:])
 zipped = zlib.compress(input)[2:-4]
 print('0x' + zipped.hex())
-
-
-## Open the file for reading
-# with open('svgPaths/yak/tennis_bytes.txt', 'r') as file:
-#    # Read the content of the file
-#    file_content = file.read() #.strip()
-# input = bytes.fromhex(file_content if not file_content.startswith('0x') else file_content[2:])
-
-#
-#
