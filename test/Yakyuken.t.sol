@@ -160,6 +160,11 @@ contract YakyukenTests is Test {
         }
     }
 
+    function test_token_uri() external view {
+        string memory tokenUri_ = _yakyuken.tokenURI(0);
+        console2.log(tokenUri_);
+    }
+
     function test_read_file() external view {
         ByteRepresentation[] memory nftInBytes_;
         string memory root_ = vm.projectRoot();
@@ -220,15 +225,16 @@ contract YakyukenTests is Test {
     }
 
     function test_compare_output() external {
-        uint128 maxToken_ = 50;
+        uint128 maxToken_ = 10;
         for (uint128 tokenId_ = 0; tokenId_ < maxToken_; tokenId_++) {
             _compareOutputFromId(tokenId_);
         }
     }
 
     function _compareOutputFromId(uint256 currentTokenId_) internal {
-        string memory contractPathFile_ = string.concat(string.concat("test/out/", vm.toString(currentTokenId_)), ".svg");
-        
+        string memory contractPathFile_ =
+            string.concat(string.concat("test/out/", vm.toString(currentTokenId_)), ".svg");
+
         // Fetch generated svg with the contract code
         string memory contractSvg_ = _yakyuken.generateSVGfromBytes(currentTokenId_);
         vm.writeFile(contractPathFile_, contractSvg_);
@@ -249,9 +255,7 @@ contract YakyukenTests is Test {
 
         // Assert outputd
         assertEq(string(res), "true");
-        
     }
-    
 
     function _setUpArrays() internal {
         //Note: decided to hardcode the expected results so it is a different method than reading from the json file

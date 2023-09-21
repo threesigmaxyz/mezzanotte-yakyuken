@@ -116,6 +116,24 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
     }
 
     function tokenURI(uint256 tokenId_) public view override returns (string memory) {
+        MetadataBytes memory data_ = processMetadataAsBytes(_imageTraits[tokenId_]);
+        Metadata memory metadata_ = abi.decode(_read(METADATA_POINTER), (Metadata));
+
+        Image memory image_ = abi.decode(
+            ZLib(_zlib).inflate(
+                _read(bytes32(keccak256(abi.encode(data_.yak)))), _imageMetadata[data_.yak].decompressedSize
+            ),
+            (Image)
+        );
+
+        Icon memory icon_ = abi.decode(
+            ZLib(_zlib).inflate(
+                _read(bytes32(keccak256(abi.encode(data_.icon + MEMORY_OFFSET)))),
+                _iconMetadata[data_.icon].decompressedSize
+            ),
+            (Icon)
+        );
+
         bytes memory dataURI = abi.encodePacked(
             "{",
             '"name": "Yakyuken #',
@@ -125,10 +143,11 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
             '", "image_data": "',
             string(
                 abi.encodePacked(
-                    "data:image/svg+xml;base64,", Base64.encode(_generateSVGfromBytes(_imageTraits[tokenId_]))
+                    "data:image/svg+xml;base64,", Base64.encode(_generateSVGfromBytes(data_, metadata_, image_, icon_))
                 )
             ),
-            '"',
+            '",',
+            _getAttributes(data_, metadata_, image_.name, icon_.name),
             "}"
         );
 
@@ -136,7 +155,24 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
     }
 
     function generateSVGfromBytes(uint256 tokenId_) external view returns (string memory svg_) {
-        svg_ = string(_generateSVGfromBytes(_imageTraits[tokenId_]));
+        MetadataBytes memory data_ = processMetadataAsBytes(_imageTraits[tokenId_]);
+        Metadata memory metadata_ = abi.decode(_read(METADATA_POINTER), (Metadata));
+
+        Image memory image_ = abi.decode(
+            ZLib(_zlib).inflate(
+                _read(bytes32(keccak256(abi.encode(data_.yak)))), _imageMetadata[data_.yak].decompressedSize
+            ),
+            (Image)
+        );
+
+        Icon memory icon_ = abi.decode(
+            ZLib(_zlib).inflate(
+                _read(bytes32(keccak256(abi.encode(data_.icon + MEMORY_OFFSET)))),
+                _iconMetadata[data_.icon].decompressedSize
+            ),
+            (Icon)
+        );
+        svg_ = string(_generateSVGfromBytes(data_, metadata_, image_, icon_));
     }
 
     function processMetadataAsBytes(bytes memory metadataInfo_) public view returns (MetadataBytes memory data_) {
@@ -189,21 +225,12 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
         if (data_.texts > metadata_.texts.length) revert OutOfBondsTraitValueError("texts");
     }
 
-    function _generateSVGfromBytes(bytes memory metadataInfo_) internal view returns (bytes memory) {
-        MetadataBytes memory data_ = processMetadataAsBytes(metadataInfo_);
-        Metadata memory metadata_ = abi.decode(_read(METADATA_POINTER), (Metadata));
-
-        bytes memory a = _read(bytes32(keccak256(abi.encode(data_.yak))));
-        Image memory image_ = abi.decode(ZLib(_zlib).inflate(a, _imageMetadata[data_.yak].decompressedSize), (Image));
-
-        Icon memory icon_ = abi.decode(
-            ZLib(_zlib).inflate(
-                _read(bytes32(keccak256(abi.encode(data_.icon + MEMORY_OFFSET)))),
-                _iconMetadata[data_.icon].decompressedSize
-            ),
-            (Icon)
-        );
-
+    function _generateSVGfromBytes(
+        MetadataBytes memory data_,
+        Metadata memory metadata_,
+        Image memory image_,
+        Icon memory icon_
+    ) internal pure returns (bytes memory) {
         return abi.encodePacked(
             _getHeader(image_.viewBox, metadata_.backgroundColors[data_.backgroundColors].value),
             _getStyleHeader(
@@ -271,5 +298,44 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
     function _getIcon(string memory path_, string memory iconSize_) internal pure returns (bytes memory) {
         string memory iconLocation_ = " x=\"5%\" y=\"5%\" ";
         return abi.encodePacked("<svg ", iconSize_, iconLocation_, "> ", path_, "</svg>");
+    }
+
+    function _getAttributes(
+        MetadataBytes memory data_,
+        Metadata memory metadata_,
+        string memory imageName_,
+        string memory iconName_
+    ) internal pure returns (string memory) {
+        return (
+            string(
+                abi.encodePacked(
+                    ' "attributes" : [{ "trait_type": "Character", "value":"',
+                    imageName_,
+                    '" },  { "trait_type": "Icon", "value": "',
+                    iconName_,
+                    '"},  { "trait_type": "Background Color", "value": "',
+                    metadata_.backgroundColors[data_.backgroundColors].value,
+                    '" }, { "trait_type": "Initial Shadow Color", "value":"',
+                    metadata_.initialShadowColors[data_.initialShadowColors].value,
+                    '" }, { "trait_type": "Initial Shadow Brightness", "value":"',
+                    metadata_.initialShadowBrightness[data_.initialShadowBrightness].value,
+                    '" }, { "trait_type": "Final Shadow Color ", "value":"',
+                    metadata_.finalShadowColors[data_.finalShadowColors].value,
+                    '" }, { "trait_type": "Final Shadow Brightness", "value":"',
+                    metadata_.finalShadowBrightness[data_.finalShadowBrightness].value,
+                    '" }, { "trait_type": "Base Fill Colors", "value":"',
+                    metadata_.baseFillColors[data_.baseFillColors].value,
+                    '" }, { "trait_type": "Glow Times", "value":"',
+                    metadata_.glowTimes[data_.glowTimes].value,
+                    '" }, { "trait_type": "Yak Fill Colors", "value":"',
+                    metadata_.yakFillColors[data_.yakFillColors].value,
+                    '" }, { "trait_type": "Hover Colors", "value":"',
+                    metadata_.yakHoverColors[data_.yakHoverColors].value,
+                    '" }, { "trait_type": "Rock, Paper, Scissors", "value":"',
+                    metadata_.texts[data_.texts].value,
+                    '"} ]'
+                )
+            )
+        );
     }
 }
