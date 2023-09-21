@@ -14,6 +14,11 @@ contract Deploy is Script {
     using Strings for uint256;
     using stdJson for string;
 
+    struct ByteRepresentation {
+        uint256 tokenId;
+        string value;
+    }
+
     bytes[] private _images = new bytes[](9);
     uint128[] private _decompressedSizes = new uint128[](9);
     bytes[] private _icons = new bytes[](4);
@@ -22,95 +27,118 @@ contract Deploy is Script {
     bytes[] private _infoArray;
 
     function setUp() public {
-        // Read JSON config data.
+        // READ JSON CONFIG DATA
         string memory root_ = vm.projectRoot();
         string memory configPath_ = string.concat(root_, "/test/yakyuken.config.json");
         string memory configData_ = vm.readFile(configPath_);
-
-        // Parse JSON config data.
         _metadataDetails = configData_.parseRaw(".metadata");
+
         // TODO Yakyuken.Metadata memory metadata_ = abi.decode(metadataDetails_, (Yakyuken.Metadata));
 
-        // Load SVG files.
-        /*(_images[0], _decompressedSizes[0]) = _loadImage(
-            "/svgPaths/yak/ami.svg", "0 0 300 500", "0", "width=\"50px\" height=\"50px\" viewbox=\"0 0 50 50\"", "Ami"
+        bytes[] memory images_ = new bytes[](10);
+        uint128[] memory decompressedSizes_ = new uint128[](10);
+        (images_[0], decompressedSizes_[0]) = _loadImage(
+            "/svgPaths/yak/ami.svg", "0 0 300 500", "0", "width=\"50px\" height=\"50px\" viewbox=\"0 0 50 50\"", "ami"
         );
-        (_images[1], _decompressedSizes[1]) = _loadImage(
+        (images_[1], decompressedSizes_[1]) = _loadImage(
             "/svgPaths/yak/christine.svg",
             "0 0 500 470",
             "0",
             "width=\"100px\" height=\"100px\" viewbox=\"0 0 100 100\"",
-            "Christine"
+            "christine"
         );
-        (_images[2], _decompressedSizes[2]) = _loadImage(
-            "/svgPaths/yak/redlady.svg",
-            "0 0 1000 600",
+        (images_[2], decompressedSizes_[2]) = _loadImage(
+            "/svgPaths/yak/yak2.svg",
+            "0 0 230 300",
             "0",
-            "width=\"100px\" height=\"100px\" viewbox=\"0 0 100 100\"",
-            "RedLady"
+            "width=\"50px\" height=\"50px\" viewbox=\"0 0 100 100\"",
+            "yak2"
         );
-        (_images[3], _decompressedSizes[3]) = _loadImage(
-            "/svgPaths/yak/josei.svg",
-            "0 0 1000 600",
+        (images_[3], decompressedSizes_[3]) = _loadImage(
+            "/svgPaths/yak/focusedgirl.svg",
+            "10.551 0.897 786.819 630.439",
             "0",
-            "width=\"100px\" height=\"100px\" viewbox=\"0 0 100 100\"",
-            "Josei"
+            "width=\"100.00px\" height=\"100.00px\" viewbox=\"10.551 0.897 786.819 630.439\"",
+            "focusedgirl"
         );
-        (_images[4], _decompressedSizes[4]) = _loadImage(
+        (images_[4], decompressedSizes_[4]) = _loadImage(
             "/svgPaths/yak/takechi.svg",
             "0 0 700 800",
             "0",
             "width=\"100px\" height=\"100px\" viewbox=\"0 0 100 100\"",
             "Takechi"
         );
-        (_images[5], _decompressedSizes[5]) = _loadImage(
+        (images_[5], decompressedSizes_[5]) = _loadImage(
             "/svgPaths/yak/sport.svg",
             "215.709 2.143 566.847 499.207",
             "0",
             "width=\"300px\" height=\"100px\" viewbox=\"115.709 1.143 466.847 499.207\"",
             "Sport"
         );
-        (_images[6], _decompressedSizes[6]) = _loadImage(
+
+        (images_[6], decompressedSizes_[6]) = _loadImage(
             "/svgPaths/yak/thinker.svg",
             "0 0 1000 600",
             "0",
             "width=\"100px\" height=\"100px\" viewbox=\"0 0 100 100\"",
             "Thinker"
         );
-        (_images[7], _decompressedSizes[7]) = _loadImage(
+
+        (images_[7], decompressedSizes_[7]) = _loadImage(
             "/svgPaths/yak/tennis.svg",
             "0 0 2000 1300",
             "0",
             "width=\"200px\" height=\"200px\" viewbox=\"0 0 200 200\"",
             "Tennis"
         );
-        (_images[8], _decompressedSizes[8]) = _loadImage(
-            "/svgPaths/yak/yak2.svg",
-            "0 0 230 300",
+
+        //NOTE: these two images need to be compressed with a different method
+        (images_[8], decompressedSizes_[8]) = _loadImageHardcoded(
+            "/svgPaths/yak/redlady.svg",
+            "0 0 1000 600",
             "0",
-            "width=\"50px\" height=\"50px\" viewbox=\"0 0 100 100\"",
-            "Yak2"
+            "width=\"100px\" height=\"100px\" viewbox=\"0 0 100 100\"",
+            "RedLady",
+            "/svgPaths/yak/redlady_compressed.txt"
         );
-        (_images[9], _decompressedSizes[9]) = _loadImage(
-            "/svgPaths/yak/focusedgirl.svg",
-            "10.551 0.897 786.819 630.439",
+
+        (images_[9], decompressedSizes_[9]) = _loadImageHardcoded(
+            "/svgPaths/yak/josei.svg",
+            "0 0 1000 600",
             "0",
-            "width=\"100.00px\" height=\"100.00px\" viewbox=\"10.551 0.897 786.819 630.439\"",
-            "FocusedGirl"
-        ); */
+            "width=\"100px\" height=\"100px\" viewbox=\"0 0 100 100\"",
+            "Josei",
+            "/svgPaths/yak/josei_compressed.txt"
+        );
 
-        (_icons[0], _decompressedSizesIcons[0]) = _loadIcon("/svgPaths/icon/stars.svg", "Stars", "yellow", 10);
-        (_icons[1], _decompressedSizesIcons[1]) = _loadIcon("/svgPaths/icon/scribble.svg", "Scribble", "red", 5);
-        (_icons[2], _decompressedSizesIcons[2]) = _loadIcon("/svgPaths/icon/abstract.svg", "Abstract", "black", 10);
-        (_icons[3], _decompressedSizesIcons[3]) = _loadIcon("/svgPaths/icon/empty.svg", "None", "transparent", 75);
-        //Yakyuken.Metadata memory metadata_ = Yakyuken.Metadata({});
+        _images = images_;
+        _decompressedSizes = decompressedSizes_;
 
-        //(_images[5], _decompressedSizes[5]) = _loadImage("/svgPaths/v3/focusedgirl.svg", "0 0 300 500", "36", "Focused Girl");
-        //(_images[6], _decompressedSizes[6]) = _loadImage("/svgPaths/v3/josei.svg", "0 0 300 500", "36", "Josei");
-        //(_images[6], _decompressedSizes[6]) = _loadImage("/svgPaths/v3/redlady.svg", "0 0 300 500", "36", "Red Lady");
-        //(_images[7], _decompressedSizes[7]) = _loadImage("/svgPaths/v3/sport.svg", "0 0 300 500", "36", "Sport");
-        bytes memory info_ = hex"07103346642311"; // example
-        _infoArray[0] = info_;
+        // Icons
+        bytes[] memory icons_ = new bytes[](4);
+        uint128[] memory decompressedSizesIcons_ = new uint128[](4);
+
+        (icons_[0], decompressedSizesIcons_[0]) = _loadIcon("/svgPaths/icon/stars.svg", "stars", "yellow", 10);
+        (icons_[1], decompressedSizesIcons_[1]) = _loadIcon("/svgPaths/icon/scribble.svg", "scribble", "red", 5);
+        (icons_[2], decompressedSizesIcons_[2]) = _loadIcon("/svgPaths/icon/abstract.svg", "abstract", "black", 10);
+        (icons_[3], decompressedSizesIcons_[3]) = _loadIcon("/svgPaths/icon/empty.svg", "none", "transparent", 75);
+
+        _icons = icons_;
+        _decompressedSizesIcons = decompressedSizesIcons_;
+
+        ByteRepresentation[] memory nftInBytes_;
+
+        string memory inputPath_ = string.concat(root_, "/test/byteRepresentation.json");
+        string memory inputData_ = vm.readFile(inputPath_);
+        bytes memory bytesData_ = inputData_.parseRaw(".");
+        nftInBytes_ = abi.decode(bytesData_, (ByteRepresentation[]));
+        bytes[] memory infoArray_ = new bytes[](nftInBytes_.length);
+
+        for (uint256 i_ = 0; i_ < infoArray_.length; i_++) {
+            infoArray_[nftInBytes_[i_].tokenId] = bytes(nftInBytes_[i_].value);
+        }
+
+        _infoArray = infoArray_; 
     }
 
     /// @dev You can send multiple transactions inside a single script.
@@ -138,6 +166,22 @@ contract Deploy is Script {
         decompressedSize_ = uint128(image_.length);
     }
 
+    function _loadImageHardcoded(
+        string memory path_,
+        string memory viewBox_,
+        string memory fontSize_,
+        string memory iconSize_,
+        string memory name_,
+        string memory hardcodedLocation_
+    ) internal view returns (bytes memory compressedImage_, uint128 decompressedSize_) {
+        string memory root_ = vm.projectRoot();
+        string memory realLocation_ = string.concat(root_, hardcodedLocation_);
+        compressedImage_ = fromHex(vm.readFile(realLocation_));
+
+        bytes memory image_ = abi.encode(Yakyuken.Image(_loadSVG(path_), viewBox_, fontSize_, iconSize_, name_));
+        decompressedSize_ = uint128(image_.length);
+    }
+
     function _loadSVG(string memory path_) internal view returns (string memory svg_) {
         string memory root_ = vm.projectRoot();
         string memory imagePath_ = string.concat(root_, path_);
@@ -151,5 +195,30 @@ contract Deploy is Script {
         bytes memory image_ = abi.encode(Yakyuken.Icon(color_, name_, _loadSVG(path_), weight_));
         compressedImage_ = ZipUtils.zip(image_);
         decompressedSize_ = uint128(image_.length);
+    }
+
+    // Convert an hexadecimal string to raw bytes
+    function fromHex(string memory s) public pure returns (bytes memory) {
+        bytes memory ss = bytes(s);
+        require(ss.length % 2 == 0); // length must be even
+        bytes memory r = new bytes(ss.length/2);
+        for (uint256 i = 0; i < ss.length / 2; ++i) {
+            r[i] = bytes1(fromHexChar(uint8(ss[2 * i])) * 16 + fromHexChar(uint8(ss[2 * i + 1])));
+        }
+        return r;
+    }
+
+    // Convert an hexadecimal character to their value
+    function fromHexChar(uint8 c) public pure returns (uint8) {
+        if (bytes1(c) >= bytes1("0") && bytes1(c) <= bytes1("9")) {
+            return c - uint8(bytes1("0"));
+        }
+        if (bytes1(c) >= bytes1("a") && bytes1(c) <= bytes1("f")) {
+            return 10 + c - uint8(bytes1("a"));
+        }
+        if (bytes1(c) >= bytes1("A") && bytes1(c) <= bytes1("F")) {
+            return 10 + c - uint8(bytes1("A"));
+        }
+        revert("fail");
     }
 }

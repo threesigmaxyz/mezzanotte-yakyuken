@@ -54,7 +54,7 @@ documentation :;
 
 # Deploy a local blockchain
 anvil :;
-	@anvil -m 'test test test test test test test test test test test junk'
+	@anvil -m 'test test test test test test test test test test test junk' -f https://eth-sepolia.g.alchemy.com/v2/
 
 # This is the private key of account from the mnemonic from the "make anvil" command
 deploy-anvil :;
