@@ -19,8 +19,11 @@ contract Deploy is Script {
         string value;
     }
 
-    bytes[] private _images = new bytes[](9);
-    uint128[] private _decompressedSizes = new uint128[](9);
+    bytes[] private _images = new bytes[](8);
+    uint128[] private _decompressedSizes = new uint128[](8);
+    bytes[] private _imagesHardcoded = new bytes[](2);
+    uint128[] private _decompressedSizesHardcoded = new uint128[](2);
+    uint256 private _totalImages;
     bytes[] private _icons = new bytes[](4);
     uint128[] private _decompressedSizesIcons = new uint128[](4);
     bytes private _metadataDetails;
@@ -35,8 +38,10 @@ contract Deploy is Script {
 
         // TODO Yakyuken.Metadata memory metadata_ = abi.decode(metadataDetails_, (Yakyuken.Metadata));
 
-        bytes[] memory images_ = new bytes[](10);
-        uint128[] memory decompressedSizes_ = new uint128[](10);
+        bytes[] memory images_ = new bytes[](8);
+        uint128[] memory decompressedSizes_ = new uint128[](8);
+        bytes[] memory imagesHardcoded_ = new bytes[](2);
+        uint128[] memory decompressedSizesHardcoded_ = new uint128[](2);
         (images_[0], decompressedSizes_[0]) = _loadImage(
             "/svgPaths/yak/ami.svg", "0 0 300 500", "0", "width=\"50px\" height=\"50px\" viewbox=\"0 0 50 50\"", "ami"
         );
@@ -75,7 +80,6 @@ contract Deploy is Script {
             "width=\"300px\" height=\"100px\" viewbox=\"115.709 1.143 466.847 499.207\"",
             "Sport"
         );
-
         (images_[6], decompressedSizes_[6]) = _loadImage(
             "/svgPaths/yak/thinker.svg",
             "0 0 1000 600",
@@ -83,7 +87,6 @@ contract Deploy is Script {
             "width=\"100px\" height=\"100px\" viewbox=\"0 0 100 100\"",
             "Thinker"
         );
-
         (images_[7], decompressedSizes_[7]) = _loadImage(
             "/svgPaths/yak/tennis.svg",
             "0 0 2000 1300",
@@ -91,9 +94,8 @@ contract Deploy is Script {
             "width=\"200px\" height=\"200px\" viewbox=\"0 0 200 200\"",
             "Tennis"
         );
-
         //NOTE: these two images need to be compressed with a different method
-        (images_[8], decompressedSizes_[8]) = _loadImageHardcoded(
+        (imagesHardcoded_[0], decompressedSizesHardcoded_[0]) = _loadImageHardcoded(
             "/svgPaths/yak/redlady.svg",
             "0 0 1000 600",
             "0",
@@ -101,8 +103,7 @@ contract Deploy is Script {
             "RedLady",
             "/svgPaths/yak/redlady_compressed.txt"
         );
-
-        (images_[9], decompressedSizes_[9]) = _loadImageHardcoded(
+        (imagesHardcoded_[1], decompressedSizesHardcoded_[1]) = _loadImageHardcoded(
             "/svgPaths/yak/josei.svg",
             "0 0 1000 600",
             "0",
@@ -110,9 +111,14 @@ contract Deploy is Script {
             "Josei",
             "/svgPaths/yak/josei_compressed.txt"
         );
-
+    
         _images = images_;
         _decompressedSizes = decompressedSizes_;
+
+        _imagesHardcoded = imagesHardcoded_;
+        _decompressedSizesHardcoded = decompressedSizesHardcoded_;
+
+        _totalImages = decompressedSizes_.length + decompressedSizesHardcoded_.length;
 
         // Icons
         bytes[] memory icons_ = new bytes[](4);
@@ -149,7 +155,10 @@ contract Deploy is Script {
         Yakyuken _yakyuken = new Yakyuken(address(new ZLib()));
 
         // Deploy SVG files.
-        _yakyuken.initialize(_metadataDetails, _images, _decompressedSizes, _icons, _decompressedSizesIcons, _infoArray);
+        _yakyuken.initializeMetadata(_metadataDetails, _infoArray);
+        _yakyuken.initializeImages(_images, _decompressedSizes, _totalImages);
+        _yakyuken.initializeImagesHardcoded(_imagesHardcoded, _decompressedSizesHardcoded, _totalImages);
+        _yakyuken.initializeIcons(_icons, _decompressedSizesIcons);
 
         vm.stopBroadcast();
     }
