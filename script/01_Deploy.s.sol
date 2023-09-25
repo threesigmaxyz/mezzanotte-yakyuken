@@ -27,7 +27,7 @@ contract Deploy is Script {
     bytes[] private _icons = new bytes[](4);
     uint128[] private _decompressedSizesIcons = new uint128[](4);
     bytes private _metadataDetails;
-    bytes[] private _infoArray;
+    bytes7[] private _infoArray;
 
     function setUp() public {
         // READ JSON CONFIG DATA
@@ -138,10 +138,10 @@ contract Deploy is Script {
         string memory inputData_ = vm.readFile(inputPath_);
         bytes memory bytesData_ = inputData_.parseRaw(".");
         nftInBytes_ = abi.decode(bytesData_, (ByteRepresentation[]));
-        bytes[] memory infoArray_ = new bytes[](nftInBytes_.length);
+        bytes7[] memory infoArray_ = new bytes7[](nftInBytes_.length);
 
         for (uint256 i_ = 0; i_ < infoArray_.length; i_++) {
-            infoArray_[nftInBytes_[i_].tokenId] = bytes(nftInBytes_[i_].value);
+            infoArray_[nftInBytes_[i_].tokenId] = bytes7(bytes(nftInBytes_[i_].value));
         }
 
         _infoArray = infoArray_;

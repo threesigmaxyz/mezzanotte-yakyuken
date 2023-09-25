@@ -21,7 +21,7 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
 
     ImageMetadata[] private _imageMetadata;
     IconMetadata[] private _iconMetadata;
-    bytes[] private _imageTraits;
+    bytes7[] private _imageTraits;
 
     bool[4] private _initialized;
     address private _saleContract;
@@ -106,7 +106,7 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
     }
 
     // TODO only callable once by the deployer.
-    function initializeMetadata(bytes calldata metadata_, bytes[] memory imageTraits_)
+    function initializeMetadata(bytes calldata metadata_, bytes7[] memory imageTraits_)
         external
         onlyOwner
         initialize(0)
@@ -212,7 +212,7 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
         svg_ = string(_generateSVGfromBytes(data_, metadata_, image_, icon_));
     }
 
-    function processMetadataAsBytes(bytes memory metadataInfo_) public view returns (MetadataBytes memory data_) {
+    function processMetadataAsBytes(bytes7 metadataInfo_) public view returns (MetadataBytes memory data_) {
         Metadata memory metadata_ = abi.decode(_read(METADATA_POINTER), (Metadata));
 
         data_.glowTimes = uint8(metadataInfo_[0]);

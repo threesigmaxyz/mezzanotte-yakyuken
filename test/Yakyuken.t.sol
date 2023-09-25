@@ -143,10 +143,10 @@ contract YakyukenTests is Test {
         string memory inputData_ = vm.readFile(inputPath_);
         bytes memory bytesData_ = inputData_.parseRaw(".");
         nftInBytes_ = abi.decode(bytesData_, (ByteRepresentation[]));
-        bytes[] memory infoArray_ = new bytes[](nftInBytes_.length);
+        bytes7[] memory infoArray_ = new bytes7[](nftInBytes_.length);
 
         for (uint256 i_ = 0; i_ < infoArray_.length; i_++) {
-            infoArray_[nftInBytes_[i_].tokenId] = bytes(nftInBytes_[i_].value);
+            infoArray_[nftInBytes_[i_].tokenId] = bytes7(bytes(nftInBytes_[i_].value));
         }
 
         _yakyuken.initializeMetadata(metadataDetails_, infoArray_);
@@ -166,20 +166,6 @@ contract YakyukenTests is Test {
     function test_token_uri() external view {
         string memory tokenUri_ = _yakyuken.tokenURI(0);
         console2.log(tokenUri_);
-    }
-
-    function test_read_file() external view {
-        ByteRepresentation[] memory nftInBytes_;
-        string memory root_ = vm.projectRoot();
-
-        string memory inputPath_ = string.concat(root_, "/test/byteRepresentation.json");
-        string memory inputData_ = vm.readFile(inputPath_);
-        bytes memory bytesData_ = inputData_.parseRaw(".");
-        nftInBytes_ = abi.decode(bytesData_, (ByteRepresentation[]));
-        bytes[] memory infoArray_ = new bytes[](nftInBytes_.length);
-        for (uint256 i_ = 0; i_ < infoArray_.length; i_++) {
-            infoArray_[nftInBytes_[i_].tokenId] = bytes(nftInBytes_[i_].value);
-        }
     }
 
     function test_read_traits() external view {
@@ -205,7 +191,7 @@ contract YakyukenTests is Test {
     }
 
     function test_process_bytes_info() external {
-        bytes memory info_ = hex"070a3346642311";
+        bytes7 info_ = hex"070a3346642311";
         Yakyuken.MetadataBytes memory result = _yakyuken.processMetadataAsBytes(info_);
         assertEq(result.glowTimes, 7);
         assertEq(result.backgroundColors, 10);
@@ -257,8 +243,8 @@ contract YakyukenTests is Test {
         bytes[] memory icons_ = new bytes[](4);
         uint128[] memory decompressedSizesIcons_ = new uint128[](4);
         bytes memory metadataDetails_;
-        bytes[] memory infoArray_;
-        
+        bytes7[] memory infoArray_;
+
         vm.expectRevert(abi.encodeWithSelector(Yakyuken.AlreadyInitializedError.selector));
         _yakyuken.initializeMetadata(metadataDetails_, infoArray_);
         vm.expectRevert(abi.encodeWithSelector(Yakyuken.AlreadyInitializedError.selector));
@@ -271,19 +257,19 @@ contract YakyukenTests is Test {
 
     function test_mint() external {
         _yakyuken.setSaleContract(vm.addr(1));
-        
+
         vm.prank(vm.addr(1));
-        _yakyuken.mint(vm.addr(2),0);
+        _yakyuken.mint(vm.addr(2), 0);
 
         assertEq(_yakyuken.balanceOf(vm.addr(2)), 1);
     }
 
     function test_mint_NotSaleContractError() external {
         _yakyuken.setSaleContract(vm.addr(1));
-        
+
         vm.startPrank(vm.addr(3));
         vm.expectRevert(abi.encodeWithSelector(Yakyuken.NotSaleContractError.selector));
-        _yakyuken.mint(vm.addr(2),0);
+        _yakyuken.mint(vm.addr(2), 0);
         vm.stopPrank();
     }
 
