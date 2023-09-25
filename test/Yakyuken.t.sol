@@ -141,7 +141,6 @@ contract YakyukenTests is Test {
 
         string memory inputPath_ = string.concat(root_, "/test/byteRepresentation.json");
         string memory inputData_ = vm.readFile(inputPath_);
-        console2.log(inputData_);
         bytes memory bytesData_ = inputData_.parseRaw(".");
         nftInBytes_ = abi.decode(bytesData_, (ByteRepresentation[]));
         bytes[] memory infoArray_ = new bytes[](nftInBytes_.length);
@@ -206,10 +205,10 @@ contract YakyukenTests is Test {
     }
 
     function test_process_bytes_info() external {
-        bytes memory info_ = hex"07103346642311";
+        bytes memory info_ = hex"070a3346642311";
         Yakyuken.MetadataBytes memory result = _yakyuken.processMetadataAsBytes(info_);
         assertEq(result.glowTimes, 7);
-        assertEq(result.backgroundColors, 16);
+        assertEq(result.backgroundColors, 10);
         assertEq(result.yakHoverColors, 3);
         assertEq(result.finalShadowColors, 3);
         assertEq(result.baseFillColors, 4);
@@ -228,9 +227,23 @@ contract YakyukenTests is Test {
         vm.writeFile(string.concat(string.concat("test/out/", vm.toString(tokenId_)), ".svg"), svg_);
     }
 
-    function test_compare_output() external {
-        uint128 maxToken_ = 10;
+    function test_compare_output_first_third() external {
+        uint128 maxToken_ = 185;
         for (uint128 tokenId_ = 0; tokenId_ < maxToken_; tokenId_++) {
+            _compareOutputFromId(tokenId_);
+        }
+    }
+
+    function test_compare_output_second_third() external {
+        uint128 maxToken_ = 370;
+        for (uint128 tokenId_ = 185; tokenId_ < maxToken_; tokenId_++) {
+            _compareOutputFromId(tokenId_);
+        }
+    }
+
+    function test_compare_output_third_third() external {
+        uint128 maxToken_ = 555;
+        for (uint128 tokenId_ = 370; tokenId_ < maxToken_; tokenId_++) {
             _compareOutputFromId(tokenId_);
         }
     }
@@ -263,36 +276,34 @@ contract YakyukenTests is Test {
 
     function _setUpArrays() internal {
         //Note: decided to hardcode the expected results so it is a different method than reading from the json file
-
         bckColors.push(Yakyuken.ValueTrait("mistyrose", 5));
         bckColors.push(Yakyuken.ValueTrait("linen", 5));
-        bckColors.push(Yakyuken.ValueTrait("mintcream", 5));
         bckColors.push(Yakyuken.ValueTrait("peach", 1));
-        bckColors.push(Yakyuken.ValueTrait("yellow", 10));
-        bckColors.push(Yakyuken.ValueTrait("lemonchiffon", 2));
-        bckColors.push(Yakyuken.ValueTrait("black", 20));
-        bckColors.push(Yakyuken.ValueTrait("thistle1", 9));
-        bckColors.push(Yakyuken.ValueTrait("aliceblue", 10));
-        bckColors.push(Yakyuken.ValueTrait("red", 12));
-        bckColors.push(Yakyuken.ValueTrait("blue4", 6));
-        bckColors.push(Yakyuken.ValueTrait("azure", 10));
-        bckColors.push(Yakyuken.ValueTrait("darkseagreen1", 1));
+        bckColors.push(Yakyuken.ValueTrait("yellow", 20));
+        bckColors.push(Yakyuken.ValueTrait("lemonchiffon", 6));
+        bckColors.push(Yakyuken.ValueTrait("black", 19));
+        bckColors.push(Yakyuken.ValueTrait("red", 24));
+        bckColors.push(Yakyuken.ValueTrait("blue", 6));
+        bckColors.push(Yakyuken.ValueTrait("deepskyblue", 6));
         bckColors.push(Yakyuken.ValueTrait("mediumblue", 1));
-        bckColors.push(Yakyuken.ValueTrait("antiquewhite2", 1));
-        bckColors.push(Yakyuken.ValueTrait("deepskyblue", 1));
-        bckColors.push(Yakyuken.ValueTrait("aquamarine3", 1));
+        bckColors.push(Yakyuken.ValueTrait("antiquewhite", 5));
+        bckColors.push(Yakyuken.ValueTrait("darkblue", 1));
+        bckColors.push(Yakyuken.ValueTrait("aquamarine", 1));
 
         bFillColors.push(Yakyuken.ValueTrait("beige", 7));
-        bFillColors.push(Yakyuken.ValueTrait("lime0", 7));
-        bFillColors.push(Yakyuken.ValueTrait("softpink", 7));
+        bFillColors.push(Yakyuken.ValueTrait("softpink", 14));
         bFillColors.push(Yakyuken.ValueTrait("waterblue", 12));
         bFillColors.push(Yakyuken.ValueTrait("lightneon", 7));
         bFillColors.push(Yakyuken.ValueTrait("wintergreen", 12));
         bFillColors.push(Yakyuken.ValueTrait("blue", 12));
         bFillColors.push(Yakyuken.ValueTrait("yellow", 12));
-        bFillColors.push(Yakyuken.ValueTrait("ivory", 12));
-        bFillColors.push(Yakyuken.ValueTrait("cadetblue3", 6));
-        bFillColors.push(Yakyuken.ValueTrait("LightCyan3", 6));
+        bFillColors.push(Yakyuken.ValueTrait("mediumspringgreen", 11));
+        bFillColors.push(Yakyuken.ValueTrait("cadetblue", 1));
+        bFillColors.push(Yakyuken.ValueTrait("violet", 1));
+        bFillColors.push(Yakyuken.ValueTrait("thistle", 1));
+        bFillColors.push(Yakyuken.ValueTrait("plum", 1));
+        bFillColors.push(Yakyuken.ValueTrait("mediumvioletred", 1));
+        bFillColors.push(Yakyuken.ValueTrait("black", 8));
 
         initialShCol.push(Yakyuken.ValueTrait("orange", 12));
         initialShCol.push(Yakyuken.ValueTrait("navy", 12));
@@ -300,10 +311,10 @@ contract YakyukenTests is Test {
         initialShCol.push(Yakyuken.ValueTrait("red", 12));
         initialShCol.push(Yakyuken.ValueTrait("blue", 12));
         initialShCol.push(Yakyuken.ValueTrait("yellow", 24));
-        initialShCol.push(Yakyuken.ValueTrait("pink", 2));
-        initialShCol.push(Yakyuken.ValueTrait("cyan3", 14));
+        initialShCol.push(Yakyuken.ValueTrait("pink", 1));
+        initialShCol.push(Yakyuken.ValueTrait("cyan", 15));
 
-        finalShCol.push(Yakyuken.ValueTrait("black", 16));
+        finalShCol.push(Yakyuken.ValueTrait("black", 8));
         finalShCol.push(Yakyuken.ValueTrait("lavender", 6));
         finalShCol.push(Yakyuken.ValueTrait("white", 12));
         finalShCol.push(Yakyuken.ValueTrait("red", 6));
@@ -312,25 +323,36 @@ contract YakyukenTests is Test {
         finalShCol.push(Yakyuken.ValueTrait("paleolivegreen", 6));
         finalShCol.push(Yakyuken.ValueTrait("mossygreen", 6));
         finalShCol.push(Yakyuken.ValueTrait("pear", 12));
-        finalShCol.push(Yakyuken.ValueTrait("midblue", 6));
+        finalShCol.push(Yakyuken.ValueTrait("blue", 10));
         finalShCol.push(Yakyuken.ValueTrait("marine", 6));
-        finalShCol.push(Yakyuken.ValueTrait("verylightpink", 6));
+        finalShCol.push(Yakyuken.ValueTrait("pink", 10));
 
-        initialShBri.push(Yakyuken.ValueTrait("0", 20));
-        initialShBri.push(Yakyuken.ValueTrait("25", 20));
-        initialShBri.push(Yakyuken.ValueTrait("50", 20));
-        initialShBri.push(Yakyuken.ValueTrait("75", 20));
-        initialShBri.push(Yakyuken.ValueTrait("100", 20));
+        initialShBri.push(Yakyuken.ValueTrait("1", 5));
+        initialShBri.push(Yakyuken.ValueTrait("25", 5));
+        initialShBri.push(Yakyuken.ValueTrait("50", 10));
+        initialShBri.push(Yakyuken.ValueTrait("75", 3));
+        initialShBri.push(Yakyuken.ValueTrait("100", 40));
+        initialShBri.push(Yakyuken.ValueTrait("125", 3));
+        initialShBri.push(Yakyuken.ValueTrait("150", 2));
+        initialShBri.push(Yakyuken.ValueTrait("175", 5));
+        initialShBri.push(Yakyuken.ValueTrait("200", 5));
+        initialShBri.push(Yakyuken.ValueTrait("300", 10));
+        initialShBri.push(Yakyuken.ValueTrait("4000", 12));
 
-        finalShBri.push(Yakyuken.ValueTrait("100", 20));
-        finalShBri.push(Yakyuken.ValueTrait("125", 20));
-        finalShBri.push(Yakyuken.ValueTrait("150", 20));
-        finalShBri.push(Yakyuken.ValueTrait("175", 20));
-        finalShBri.push(Yakyuken.ValueTrait("200", 20));
+        finalShBri.push(Yakyuken.ValueTrait("25", 10));
+        finalShBri.push(Yakyuken.ValueTrait("50", 10));
+        finalShBri.push(Yakyuken.ValueTrait("75", 10));
+        finalShBri.push(Yakyuken.ValueTrait("100", 15));
+        finalShBri.push(Yakyuken.ValueTrait("125", 3));
+        finalShBri.push(Yakyuken.ValueTrait("150", 2));
+        finalShBri.push(Yakyuken.ValueTrait("175", 15));
+        finalShBri.push(Yakyuken.ValueTrait("200", 15));
+        finalShBri.push(Yakyuken.ValueTrait("3000", 10));
+        finalShBri.push(Yakyuken.ValueTrait("5000", 10));
 
         glTimes.push(Yakyuken.ValueTrait("1", 4));
         glTimes.push(Yakyuken.ValueTrait("5", 2));
-        glTimes.push(Yakyuken.ValueTrait(".1", 20));
+        glTimes.push(Yakyuken.ValueTrait(".5", 20));
         glTimes.push(Yakyuken.ValueTrait(".2", 5));
         glTimes.push(Yakyuken.ValueTrait("32", 1));
         glTimes.push(Yakyuken.ValueTrait("1.5", 6));
@@ -348,32 +370,34 @@ contract YakyukenTests is Test {
         glTimes.push(Yakyuken.ValueTrait(".3", 4));
         glTimes.push(Yakyuken.ValueTrait(".4", 2));
 
-        ykFillCol.push(Yakyuken.ValueTrait("floralwhite", 9));
+        ykFillCol.push(Yakyuken.ValueTrait("lightorange", 9));
         ykFillCol.push(Yakyuken.ValueTrait("lavenderblush", 9));
-        ykFillCol.push(Yakyuken.ValueTrait("indianred1", 9));
-        ykFillCol.push(Yakyuken.ValueTrait("snow2", 9));
-        ykFillCol.push(Yakyuken.ValueTrait("blush", 16));
+        ykFillCol.push(Yakyuken.ValueTrait("powderblue", 9));
+        ykFillCol.push(Yakyuken.ValueTrait("navy", 9));
+        ykFillCol.push(Yakyuken.ValueTrait("neon", 8));
         ykFillCol.push(Yakyuken.ValueTrait("blue", 8));
-        ykFillCol.push(Yakyuken.ValueTrait("verylightpink", 8));
+        ykFillCol.push(Yakyuken.ValueTrait("blue", 8));
+        ykFillCol.push(Yakyuken.ValueTrait("pink", 8));
         ykFillCol.push(Yakyuken.ValueTrait("yellow", 8));
-        ykFillCol.push(Yakyuken.ValueTrait("orange0", 8));
-        ykFillCol.push(Yakyuken.ValueTrait("teal3", 8));
+        ykFillCol.push(Yakyuken.ValueTrait("pastel", 8));
+        ykFillCol.push(Yakyuken.ValueTrait("turqouise", 8));
         ykFillCol.push(Yakyuken.ValueTrait("honeydew", 8));
 
-        ykHvCol.push(Yakyuken.ValueTrait("lightcoral", 10));
+        ykHvCol.push(Yakyuken.ValueTrait("goldenrod", 10));
         ykHvCol.push(Yakyuken.ValueTrait("mintcream", 5));
-        ykHvCol.push(Yakyuken.ValueTrait("white", 8));
         ykHvCol.push(Yakyuken.ValueTrait("red", 8));
-        ykHvCol.push(Yakyuken.ValueTrait("blue", 14));
-        ykHvCol.push(Yakyuken.ValueTrait("aquamarine2", 16));
-        ykHvCol.push(Yakyuken.ValueTrait("honeydew", 8));
+        ykHvCol.push(Yakyuken.ValueTrait("lightblue", 18));
+        ykHvCol.push(Yakyuken.ValueTrait("aquamarine", 10));
+        ykHvCol.push(Yakyuken.ValueTrait("coral", 10));
+        ykHvCol.push(Yakyuken.ValueTrait("white", 8));
         ykHvCol.push(Yakyuken.ValueTrait("lavenderblush", 4));
         ykHvCol.push(Yakyuken.ValueTrait("verylightpink", 4));
-        ykHvCol.push(Yakyuken.ValueTrait("peach", 5));
+        ykHvCol.push(Yakyuken.ValueTrait("pink", 5));
         ykHvCol.push(Yakyuken.ValueTrait("whitesmoke", 8));
-        ykHvCol.push(Yakyuken.ValueTrait("neon", 7));
-        ykHvCol.push(Yakyuken.ValueTrait("red3", 2));
+        ykHvCol.push(Yakyuken.ValueTrait("lavender", 7));
+        ykHvCol.push(Yakyuken.ValueTrait("lightorange", 2));
         ykHvCol.push(Yakyuken.ValueTrait("yellow", 1));
+        ykHvCol.push(Yakyuken.ValueTrait("black", 1));
 
         //TODO: texts is being ignored because one of the char is not recognized by solidity
         //txts.push(Yakyuken.ValueTrait("石", 33));

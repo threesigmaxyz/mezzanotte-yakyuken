@@ -90,19 +90,14 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
     }
 
     // TODO only callable once by the deployer.
-    function initializeMetadata(
-        bytes calldata metadata_,
-        bytes[] memory imageTraits_
-    ) external {
+    function initializeMetadata(bytes calldata metadata_, bytes[] memory imageTraits_) external {
         _write(METADATA_POINTER, metadata_);
         _imageTraits = imageTraits_;
     }
 
-    function initializeImages(
-        bytes[] calldata images_,
-        uint128[] calldata decompressedSizes_,
-        uint256 totalImages_
-    ) external {
+    function initializeImages(bytes[] calldata images_, uint128[] calldata decompressedSizes_, uint256 totalImages_)
+        external
+    {
         uint256 imageCount_ = images_.length;
         for (uint256 i_; i_ < imageCount_; i_++) {
             _write(bytes32(keccak256(abi.encode(i_))), images_[i_]);
@@ -116,17 +111,14 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
         uint128[] calldata decompressedSizes_,
         uint256 totalImages_
     ) external {
-        uint256 imageCount_ = totalImages_- images_.length;
+        uint256 imageCount_ = totalImages_ - images_.length;
         for (uint256 i_; i_ < images_.length; i_++) {
             _write(bytes32(keccak256(abi.encode(i_ + imageCount_))), images_[i_]);
             _imageMetadata.push(ImageMetadata(decompressedSizes_[i_], uint128(100 / totalImages_))); // TODO pass as init argument
         }
     }
 
-    function initializeIcons(
-        bytes[] calldata icons_,
-        uint128[] calldata decompressedSizesIcons_
-    ) external {
+    function initializeIcons(bytes[] calldata icons_, uint128[] calldata decompressedSizesIcons_) external {
         uint256 iconCount_ = icons_.length;
         for (uint256 j_; j_ < iconCount_; j_++) {
             _write(bytes32(keccak256(abi.encode(j_ + MEMORY_OFFSET))), icons_[j_]);
@@ -261,7 +253,7 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
                 metadata_.glowTimes[data_.glowTimes].value,
                 metadata_.yakFillColors[data_.yakFillColors].value,
                 metadata_.yakHoverColors[data_.yakHoverColors].value,
-                icon_.color
+                metadata_.yakFillColors[data_.yakFillColors].value
             ),
             image_.path,
             _getIcon(icon_.path, image_.iconSize),

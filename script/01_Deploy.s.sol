@@ -111,7 +111,7 @@ contract Deploy is Script {
             "Josei",
             "/svgPaths/yak/josei_compressed.txt"
         );
-    
+
         _images = images_;
         _decompressedSizes = decompressedSizes_;
 
@@ -144,7 +144,7 @@ contract Deploy is Script {
             infoArray_[nftInBytes_[i_].tokenId] = bytes(nftInBytes_[i_].value);
         }
 
-        _infoArray = infoArray_; 
+        _infoArray = infoArray_;
     }
 
     /// @dev You can send multiple transactions inside a single script.
