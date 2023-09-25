@@ -124,10 +124,10 @@ contract Deploy is Script {
         bytes[] memory icons_ = new bytes[](4);
         uint128[] memory decompressedSizesIcons_ = new uint128[](4);
 
-        (icons_[0], decompressedSizesIcons_[0]) = _loadIcon("/svgPaths/icon/stars.svg", "stars", "yellow", 10);
-        (icons_[1], decompressedSizesIcons_[1]) = _loadIcon("/svgPaths/icon/scribble.svg", "scribble", "red", 5);
-        (icons_[2], decompressedSizesIcons_[2]) = _loadIcon("/svgPaths/icon/abstract.svg", "abstract", "black", 10);
-        (icons_[3], decompressedSizesIcons_[3]) = _loadIcon("/svgPaths/icon/empty.svg", "none", "transparent", 75);
+        (icons_[0], decompressedSizesIcons_[0]) = _loadIcon("/svgPaths/icon/stars.svg", "stars", "yellow");
+        (icons_[1], decompressedSizesIcons_[1]) = _loadIcon("/svgPaths/icon/scribble.svg", "scribble", "red");
+        (icons_[2], decompressedSizesIcons_[2]) = _loadIcon("/svgPaths/icon/abstract.svg", "abstract", "black");
+        (icons_[3], decompressedSizesIcons_[3]) = _loadIcon("/svgPaths/icon/empty.svg", "none", "transparent");
 
         _icons = icons_;
         _decompressedSizesIcons = decompressedSizesIcons_;
@@ -197,11 +197,11 @@ contract Deploy is Script {
         svg_ = vm.readFile(imagePath_);
     }
 
-    function _loadIcon(string memory path_, string memory name_, string memory color_, uint256 weight_)
+    function _loadIcon(string memory path_, string memory name_, string memory color_)
         internal
         returns (bytes memory compressedImage_, uint128 decompressedSize_)
     {
-        bytes memory image_ = abi.encode(Yakyuken.Icon(color_, name_, _loadSVG(path_), weight_));
+        bytes memory image_ = abi.encode(Yakyuken.Icon(color_, name_, _loadSVG(path_)));
         compressedImage_ = ZipUtils.zip(image_);
         decompressedSize_ = uint128(image_.length);
     }
