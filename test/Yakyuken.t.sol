@@ -50,7 +50,6 @@ contract YakyukenTests is Test {
         string memory configData_ = vm.readFile(configPath_);
         bytes memory metadataDetails_ = configData_.parseRaw(".metadata");
 
-        //Yakyuken.Metadata memory metadata_ = abi.decode(metadataDetails_, (Yakyuken.Metadata));
         bytes[] memory images_ = new bytes[](8);
         uint128[] memory decompressedSizes_ = new uint128[](8);
         bytes[] memory imagesHardcoded_ = new bytes[](2);
@@ -185,7 +184,7 @@ contract YakyukenTests is Test {
         _compareValueTraitStruct(metadata_.glowTimes, glTimes, "Glow Times");
         _compareValueTraitStruct(metadata_.yakFillColors, ykFillCol, "Yak Fill Colors");
         _compareValueTraitStruct(metadata_.yakHoverColors, ykHvCol, "Yak Hover Colors");
-        //_compareValueTraitStruct(metadata_.texts, txts); // NOTE: see init struct of texts
+        _compareValueTraitStruct(metadata_.texts, txts, "Rock Paper Scissors");
         //_compareIconStruct(metadata_.icons, icn, "Icons"); // TODO: compare unzipping
     }
 
@@ -423,10 +422,9 @@ contract YakyukenTests is Test {
         ykHvCol.push("yellow");
         ykHvCol.push("black");
 
-        //TODO: texts is being ignored because one of the char is not recognized by solidity
-        //txts.push("石", 33));
-        //txts.push("紙", 33));
-        //txts.push("はさみ", 34));
+        txts.push("\u77f3");
+        txts.push("\u7d19");
+        txts.push("\u306f\u3055\u307f");
 
         icn.push(Yakyuken.Icon("yellow", "Stars", _loadSVG("/svgPaths/icon/stars.svg"))); //
         icn.push(Yakyuken.Icon("red", "Scribble", _loadSVG("/svgPaths/icon/scribble.svg")));

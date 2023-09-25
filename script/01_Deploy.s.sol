@@ -36,8 +36,6 @@ contract Deploy is Script {
         string memory configData_ = vm.readFile(configPath_);
         _metadataDetails = configData_.parseRaw(".metadata");
 
-        // TODO Yakyuken.Metadata memory metadata_ = abi.decode(metadataDetails_, (Yakyuken.Metadata));
-
         bytes[] memory images_ = new bytes[](8);
         uint128[] memory decompressedSizes_ = new uint128[](8);
         bytes[] memory imagesHardcoded_ = new bytes[](2);
