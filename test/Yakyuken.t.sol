@@ -248,6 +248,45 @@ contract YakyukenTests is Test {
         }
     }
 
+    function test_initialize_alreadyInitializedError() external {
+        bytes[] memory images_ = new bytes[](8);
+        uint128[] memory decompressedSizes_ = new uint128[](8);
+        bytes[] memory imagesHardcoded_ = new bytes[](2);
+        uint128[] memory decompressedSizesHardcoded_ = new uint128[](2);
+        uint256 totalImages_ = 0;
+        bytes[] memory icons_ = new bytes[](4);
+        uint128[] memory decompressedSizesIcons_ = new uint128[](4);
+        bytes memory metadataDetails_;
+        bytes[] memory infoArray_;
+        
+        vm.expectRevert(abi.encodeWithSelector(Yakyuken.AlreadyInitializedError.selector));
+        _yakyuken.initializeMetadata(metadataDetails_, infoArray_);
+        vm.expectRevert(abi.encodeWithSelector(Yakyuken.AlreadyInitializedError.selector));
+        _yakyuken.initializeImages(images_, decompressedSizes_, totalImages_);
+        vm.expectRevert(abi.encodeWithSelector(Yakyuken.AlreadyInitializedError.selector));
+        _yakyuken.initializeImagesHardcoded(imagesHardcoded_, decompressedSizesHardcoded_, totalImages_);
+        vm.expectRevert(abi.encodeWithSelector(Yakyuken.AlreadyInitializedError.selector));
+        _yakyuken.initializeIcons(icons_, decompressedSizesIcons_);
+    }
+
+    function test_mint() external {
+        _yakyuken.setSaleContract(vm.addr(1));
+        
+        vm.prank(vm.addr(1));
+        _yakyuken.mint(vm.addr(2),0);
+
+        assertEq(_yakyuken.balanceOf(vm.addr(2)), 1);
+    }
+
+    function test_mint_NotSaleContractError() external {
+        _yakyuken.setSaleContract(vm.addr(1));
+        
+        vm.startPrank(vm.addr(3));
+        vm.expectRevert(abi.encodeWithSelector(Yakyuken.NotSaleContractError.selector));
+        _yakyuken.mint(vm.addr(2),0);
+        vm.stopPrank();
+    }
+
     function _compareOutputFromId(uint256 currentTokenId_) internal {
         string memory contractPathFile_ =
             string.concat(string.concat("test/out/", vm.toString(currentTokenId_)), ".svg");

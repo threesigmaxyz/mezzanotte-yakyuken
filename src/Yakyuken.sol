@@ -23,6 +23,9 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
     IconMetadata[] private _iconMetadata;
     bytes[] private _imageTraits;
 
+    bool[4] private _initialized;
+    address private _saleContract;
+
     struct Image {
         string path;
         string viewBox;
@@ -84,19 +87,38 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
     }
 
     error OutOfBondsTraitValueError(string trait);
+    error AlreadyInitializedError();
+    error NotSaleContractError();
+
+    modifier initialize(uint256 id_) {
+        if (_initialized[id_]) revert AlreadyInitializedError();
+        _initialized[id_] = true;
+        _;
+    }
+
+    modifier onlySale() {
+        if (msg.sender != _saleContract) revert NotSaleContractError();
+        _;
+    }
 
     constructor(address zlib_) ERC721("Yakyuken", "YNFT") Ownable(msg.sender) {
         _zlib = zlib_;
     }
 
     // TODO only callable once by the deployer.
-    function initializeMetadata(bytes calldata metadata_, bytes[] memory imageTraits_) external {
+    function initializeMetadata(bytes calldata metadata_, bytes[] memory imageTraits_)
+        external
+        onlyOwner
+        initialize(0)
+    {
         _write(METADATA_POINTER, metadata_);
         _imageTraits = imageTraits_;
     }
 
     function initializeImages(bytes[] calldata images_, uint128[] calldata decompressedSizes_, uint256 totalImages_)
         external
+        onlyOwner
+        initialize(1)
     {
         uint256 imageCount_ = images_.length;
         for (uint256 i_; i_ < imageCount_; i_++) {
@@ -110,7 +132,7 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
         bytes[] calldata images_,
         uint128[] calldata decompressedSizes_,
         uint256 totalImages_
-    ) external {
+    ) external onlyOwner initialize(2) {
         uint256 imageCount_ = totalImages_ - images_.length;
         for (uint256 i_; i_ < images_.length; i_++) {
             _write(bytes32(keccak256(abi.encode(i_ + imageCount_))), images_[i_]);
@@ -118,7 +140,11 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
         }
     }
 
-    function initializeIcons(bytes[] calldata icons_, uint128[] calldata decompressedSizesIcons_) external {
+    function initializeIcons(bytes[] calldata icons_, uint128[] calldata decompressedSizesIcons_)
+        external
+        onlyOwner
+        initialize(3)
+    {
         uint256 iconCount_ = icons_.length;
         for (uint256 j_; j_ < iconCount_; j_++) {
             _write(bytes32(keccak256(abi.encode(j_ + MEMORY_OFFSET))), icons_[j_]);
@@ -234,6 +260,14 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
 
         data_.texts = uint8(metadataInfo_[6] & 0x0F);
         if (data_.texts > metadata_.texts.length) revert OutOfBondsTraitValueError("texts");
+    }
+
+    function mint(address to_, uint256 tokenId_) external onlySale {
+        _mint(to_, tokenId_);
+    }
+
+    function setSaleContract(address sale_) external onlyOwner {
+        _saleContract = sale_;
     }
 
     function _generateSVGfromBytes(
