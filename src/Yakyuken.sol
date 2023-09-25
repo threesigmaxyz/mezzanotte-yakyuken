@@ -19,8 +19,8 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
 
     address private immutable _zlib;
 
-    ImageMetadata[] private _imageMetadata;
-    IconMetadata[] private _iconMetadata;
+    uint128[] private _imageMetadata;
+    uint128[] private _iconMetadata;
     bytes7[] private _imageTraits;
 
     bool[4] private _initialized;
@@ -34,11 +34,6 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
         string name;
     }
 
-    struct ImageMetadata {
-        uint128 decompressedSize;
-        uint128 weight;
-    }
-
     struct ValueTrait {
         string value;
         uint256 weight;
@@ -49,11 +44,6 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
         string color;
         string name;
         string path;
-    }
-
-    struct IconMetadata {
-        uint128 decompressedSize;
-        uint128 weight;
     }
 
     struct MetadataBytes {
@@ -114,7 +104,7 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
         _imageTraits = imageTraits_;
     }
 
-    function initializeImages(bytes[] calldata images_, uint128[] calldata decompressedSizes_, uint256 totalImages_)
+    function initializeImages(bytes[] calldata images_, uint128[] calldata decompressedSizes_)
         external
         onlyOwner
         initialize(1)
@@ -122,7 +112,7 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
         uint256 imageCount_ = images_.length;
         for (uint256 i_; i_ < imageCount_; i_++) {
             _write(bytes32(keccak256(abi.encode(i_))), images_[i_]);
-            _imageMetadata.push(ImageMetadata(decompressedSizes_[i_], uint128(100 / totalImages_))); // TODO pass as init argument
+            _imageMetadata.push(decompressedSizes_[i_]);
         }
     }
 
@@ -135,7 +125,7 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
         uint256 imageCount_ = totalImages_ - images_.length;
         for (uint256 i_; i_ < images_.length; i_++) {
             _write(bytes32(keccak256(abi.encode(i_ + imageCount_))), images_[i_]);
-            _imageMetadata.push(ImageMetadata(decompressedSizes_[i_], uint128(100 / totalImages_))); // TODO pass as init argument
+            _imageMetadata.push(decompressedSizes_[i_]); 
         }
     }
 
@@ -147,7 +137,7 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
         uint256 iconCount_ = icons_.length;
         for (uint256 j_; j_ < iconCount_; j_++) {
             _write(bytes32(keccak256(abi.encode(j_ + MEMORY_OFFSET))), icons_[j_]);
-            _iconMetadata.push(IconMetadata(decompressedSizesIcons_[j_], uint128(100 / icons_.length))); // TODO pass as init argument
+            _iconMetadata.push(decompressedSizesIcons_[j_]); // TODO pass as init argument
         }
     }
 
@@ -157,7 +147,7 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
 
         Image memory image_ = abi.decode(
             ZLib(_zlib).inflate(
-                _read(bytes32(keccak256(abi.encode(data_.yak)))), _imageMetadata[data_.yak].decompressedSize
+                _read(bytes32(keccak256(abi.encode(data_.yak)))), _imageMetadata[data_.yak]
             ),
             (Image)
         );
@@ -165,7 +155,7 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
         Icon memory icon_ = abi.decode(
             ZLib(_zlib).inflate(
                 _read(bytes32(keccak256(abi.encode(data_.icon + MEMORY_OFFSET)))),
-                _iconMetadata[data_.icon].decompressedSize
+                _iconMetadata[data_.icon]
             ),
             (Icon)
         );
@@ -196,7 +186,7 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
 
         Image memory image_ = abi.decode(
             ZLib(_zlib).inflate(
-                _read(bytes32(keccak256(abi.encode(data_.yak)))), _imageMetadata[data_.yak].decompressedSize
+                _read(bytes32(keccak256(abi.encode(data_.yak)))), _imageMetadata[data_.yak]
             ),
             (Image)
         );
@@ -204,7 +194,7 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
         Icon memory icon_ = abi.decode(
             ZLib(_zlib).inflate(
                 _read(bytes32(keccak256(abi.encode(data_.icon + MEMORY_OFFSET)))),
-                _iconMetadata[data_.icon].decompressedSize
+                _iconMetadata[data_.icon]
             ),
             (Icon)
         );

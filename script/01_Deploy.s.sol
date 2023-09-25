@@ -156,7 +156,7 @@ contract Deploy is Script {
 
         // Deploy SVG files.
         _yakyuken.initializeMetadata(_metadataDetails, _infoArray);
-        _yakyuken.initializeImages(_images, _decompressedSizes, _totalImages);
+        _yakyuken.initializeImages(_images, _decompressedSizes);
         _yakyuken.initializeImagesHardcoded(_imagesHardcoded, _decompressedSizesHardcoded, _totalImages);
         _yakyuken.initializeIcons(_icons, _decompressedSizesIcons);
 

@@ -150,7 +150,7 @@ contract YakyukenTests is Test {
         }
 
         _yakyuken.initializeMetadata(metadataDetails_, infoArray_);
-        _yakyuken.initializeImages(images_, decompressedSizes_, totalImages_);
+        _yakyuken.initializeImages(images_, decompressedSizes_);
         _yakyuken.initializeImagesHardcoded(imagesHardcoded_, decompressedSizesHardcoded_, totalImages_);
         _yakyuken.initializeIcons(icons_, decompressedSizesIcons_);
     }
@@ -248,7 +248,7 @@ contract YakyukenTests is Test {
         vm.expectRevert(abi.encodeWithSelector(Yakyuken.AlreadyInitializedError.selector));
         _yakyuken.initializeMetadata(metadataDetails_, infoArray_);
         vm.expectRevert(abi.encodeWithSelector(Yakyuken.AlreadyInitializedError.selector));
-        _yakyuken.initializeImages(images_, decompressedSizes_, totalImages_);
+        _yakyuken.initializeImages(images_, decompressedSizes_);
         vm.expectRevert(abi.encodeWithSelector(Yakyuken.AlreadyInitializedError.selector));
         _yakyuken.initializeImagesHardcoded(imagesHardcoded_, decompressedSizesHardcoded_, totalImages_);
         vm.expectRevert(abi.encodeWithSelector(Yakyuken.AlreadyInitializedError.selector));
