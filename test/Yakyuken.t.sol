@@ -19,6 +19,8 @@ contract YakyukenTests is Test {
     Yakyuken private _yakyuken;
     Yakyuken.Metadata metadata;
 
+    bytes7[] private _infoArray;
+
     struct ByteRepresentation {
         uint256 tokenId;
         string value;
@@ -145,19 +147,27 @@ contract YakyukenTests is Test {
         string memory inputData_ = vm.readFile(inputPath_);
         bytes memory bytesData_ = inputData_.parseRaw(".");
         nftInBytes_ = abi.decode(bytesData_, (ByteRepresentation[]));
+        bytes7[] memory sampleInfoArray_ = new bytes7[](1);
         bytes7[] memory infoArray_ = new bytes7[](nftInBytes_.length);
+
+        _infoArray = new bytes7[](nftInBytes_.length);
+
+        sampleInfoArray_[0] = bytes7(bytes(nftInBytes_[0].value));
 
         for (uint256 i_ = 0; i_ < infoArray_.length; i_++) {
             infoArray_[nftInBytes_[i_].tokenId] = bytes7(bytes(nftInBytes_[i_].value));
         }
 
-        _yakyuken.initializeMetadata(metadataDetails_, infoArray_);
+        _infoArray = infoArray_;
+
+        _yakyuken.initializeMetadata(metadataDetails_, sampleInfoArray_);
         _yakyuken.initializeImages(images_, decompressedSizes_);
         _yakyuken.initializeImagesHardcoded(imagesHardcoded_, decompressedSizesHardcoded_, totalImages_);
         _yakyuken.initializeIcons(icons_, decompressedSizesIcons_);
     }
 
     function test_ok() external {
+        _yakyuken.reveal(_infoArray);
         uint128 maxToken_ = 10;
         for (uint128 tokenId_ = 0; tokenId_ < maxToken_; tokenId_++) {
             string memory svg_ = _yakyuken.generateSVGfromBytes(tokenId_);
@@ -165,12 +175,14 @@ contract YakyukenTests is Test {
         }
     }
 
-    function test_token_uri() external view {
+    function test_token_uri() external {
+        _yakyuken.reveal(_infoArray);
         string memory tokenUri_ = _yakyuken.tokenURI(0);
         console2.log(tokenUri_);
     }
 
-    function test_read_traits() external view {
+    function test_read_traits() external {
+        _yakyuken.reveal(_infoArray);
         // READ JSON CONFIG DATA
         string memory root_ = vm.projectRoot();
         string memory configPath_ = string.concat(root_, "/test/yakyuken.config.json");
@@ -193,6 +205,7 @@ contract YakyukenTests is Test {
     }
 
     function test_process_bytes_info() external {
+        _yakyuken.reveal(_infoArray);
         bytes7 info_ = hex"070a3346642311";
         Yakyuken.MetadataBytes memory result = _yakyuken.processMetadataAsBytes(info_);
         assertEq(result.glowTimes, 7);
@@ -210,12 +223,14 @@ contract YakyukenTests is Test {
     }
 
     function test_generate_from_bytes_data() external {
+        _yakyuken.reveal(_infoArray);
         uint16 tokenId_ = 0;
         string memory svg_ = _yakyuken.generateSVGfromBytes(tokenId_);
         vm.writeFile(string.concat(string.concat("test/out/", vm.toString(tokenId_)), ".svg"), svg_);
     }
 
     function test_compare_output_first_third() external {
+        _yakyuken.reveal(_infoArray);
         uint128 maxToken_ = 185;
         for (uint128 tokenId_ = 0; tokenId_ < maxToken_; tokenId_++) {
             _compareOutputFromId(tokenId_);
@@ -223,6 +238,7 @@ contract YakyukenTests is Test {
     }
 
     function test_compare_output_second_third() external {
+        _yakyuken.reveal(_infoArray);
         uint128 maxToken_ = 370;
         for (uint128 tokenId_ = 185; tokenId_ < maxToken_; tokenId_++) {
             _compareOutputFromId(tokenId_);
@@ -230,6 +246,7 @@ contract YakyukenTests is Test {
     }
 
     function test_compare_output_third_third() external {
+        _yakyuken.reveal(_infoArray);
         uint128 maxToken_ = 555;
         for (uint128 tokenId_ = 370; tokenId_ < maxToken_; tokenId_++) {
             _compareOutputFromId(tokenId_);
@@ -275,6 +292,23 @@ contract YakyukenTests is Test {
         vm.stopPrank();
     }
 
+    function test_reveal() external {
+        uint128 maxToken_ = 10;
+        for (uint128 tokenId_ = 0; tokenId_ < maxToken_; tokenId_++) {
+            string memory svg_ = _yakyuken.generateSVGfromBytes(tokenId_);
+            vm.writeFile(string.concat(string.concat("test/out/", vm.toString(tokenId_)), ".svg"), svg_);
+            _compareOutputFromIdSample(tokenId_);
+        }
+
+        _yakyuken.reveal(_infoArray);
+
+        for (uint128 tokenId_ = 0; tokenId_ < maxToken_; tokenId_++) {
+            string memory svg_ = _yakyuken.generateSVGfromBytes(tokenId_);
+            vm.writeFile(string.concat(string.concat("test/out/", vm.toString(tokenId_)), ".svg"), svg_);
+            _compareOutputFromId(tokenId_);
+        }
+    }
+
     function _compareOutputFromId(uint256 currentTokenId_) internal {
         string memory contractPathFile_ =
             string.concat(string.concat("test/out/", vm.toString(currentTokenId_)), ".svg");
@@ -286,6 +320,32 @@ contract YakyukenTests is Test {
         // Fetch generated svg with the svg generator
         string memory pythonPathFile_ =
             string.concat(string.concat("test/python-generated-svg/", currentTokenId_.toString()), ".svg");
+
+        // Prepare output to run script
+        string[] memory inputs = new string[](4);
+        inputs[0] = "node";
+        inputs[1] = "test/compareStrings.js";
+        inputs[2] = contractPathFile_;
+        inputs[3] = pythonPathFile_;
+
+        // Run script
+        bytes memory res = vm.ffi(inputs);
+
+        // Assert outputd
+        assertEq(string(res), "true");
+    }
+
+    function _compareOutputFromIdSample(uint256 currentTokenId_) internal {
+        string memory contractPathFile_ =
+            string.concat(string.concat("test/out/", vm.toString(currentTokenId_)), ".svg");
+
+        // Fetch generated svg with the contract code
+        string memory contractSvg_ = _yakyuken.generateSVGfromBytes(currentTokenId_);
+        vm.writeFile(contractPathFile_, contractSvg_);
+
+        // Fetch generated svg with the svg generator
+        string memory pythonPathFile_ =
+            string.concat("test/python-generated-svg/0.svg");
 
         // Prepare output to run script
         string[] memory inputs = new string[](4);

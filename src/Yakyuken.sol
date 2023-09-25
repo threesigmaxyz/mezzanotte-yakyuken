@@ -22,9 +22,11 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
     uint128[] private _imageMetadata;
     uint128[] private _iconMetadata;
     bytes7[] private _imageTraits;
+    bytes7[] private _sampleImageTraits;
 
     bool[4] private _initialized;
     address private _saleContract;
+    bool private _revealed;
 
     struct Image {
         string path;
@@ -90,13 +92,13 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
     }
 
     ///@dev  must be the first initialize to be called
-    function initializeMetadata(bytes calldata metadata_, bytes7[] memory imageTraits_)
+    function initializeMetadata(bytes calldata metadata_, bytes7[] memory sampleImageTraits_)
         external
         onlyOwner
         initialize(0)
     {
         _write(METADATA_POINTER, metadata_);
-        _imageTraits = imageTraits_;
+        _sampleImageTraits = sampleImageTraits_;
     }
 
     ///@dev  must be called after initializeMetadata().
@@ -138,8 +140,19 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
         }
     }
 
+    function reveal(bytes7[] memory imageTraits_) external onlyOwner {
+        _revealed = true;
+        _imageTraits = imageTraits_;
+    }
+
     function tokenURI(uint256 tokenId_) public view override returns (string memory) {
-        MetadataBytes memory data_ = processMetadataAsBytes(_imageTraits[tokenId_]);
+        MetadataBytes memory data_;
+        if(_revealed){
+            data_ = processMetadataAsBytes(_imageTraits[tokenId_]);
+        }else {
+            data_ = processMetadataAsBytes(_sampleImageTraits[0]);
+        }
+        
         Metadata memory metadata_ = abi.decode(_read(METADATA_POINTER), (Metadata));
 
         Image memory image_ = abi.decode(
@@ -174,7 +187,13 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
     }
 
     function generateSVGfromBytes(uint256 tokenId_) external view returns (string memory svg_) {
-        MetadataBytes memory data_ = processMetadataAsBytes(_imageTraits[tokenId_]);
+        MetadataBytes memory data_;
+        if(_revealed){
+            data_ = processMetadataAsBytes(_imageTraits[tokenId_]);
+        }else {
+            data_ = processMetadataAsBytes(_sampleImageTraits[0]);
+        }
+
         Metadata memory metadata_ = abi.decode(_read(METADATA_POINTER), (Metadata));
 
         Image memory image_ = abi.decode(

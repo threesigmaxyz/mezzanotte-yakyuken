@@ -28,6 +28,7 @@ contract Deploy is Script {
     uint128[] private _decompressedSizesIcons = new uint128[](4);
     bytes private _metadataDetails;
     bytes7[] private _infoArray;
+    bytes7[] private _sampleInfoArray;
 
     function setUp() public {
         // READ JSON CONFIG DATA
@@ -142,7 +143,11 @@ contract Deploy is Script {
             infoArray_[nftInBytes_[i_].tokenId] = bytes7(bytes(nftInBytes_[i_].value));
         }
 
+        _infoArray = new bytes7[](nftInBytes_.length);
         _infoArray = infoArray_;
+
+        _sampleInfoArray = new bytes7[](1);
+        _sampleInfoArray[0] = bytes7(bytes(nftInBytes_[0].value));
     }
 
     /// @dev You can send multiple transactions inside a single script.
@@ -153,7 +158,7 @@ contract Deploy is Script {
         Yakyuken _yakyuken = new Yakyuken(address(new ZLib()));
 
         // Deploy SVG files.
-        _yakyuken.initializeMetadata(_metadataDetails, _infoArray);
+        _yakyuken.initializeMetadata(_metadataDetails, _sampleInfoArray);
         _yakyuken.initializeImages(_images, _decompressedSizes);
         _yakyuken.initializeImagesHardcoded(_imagesHardcoded, _decompressedSizesHardcoded, _totalImages);
         _yakyuken.initializeIcons(_icons, _decompressedSizesIcons);
