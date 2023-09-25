@@ -89,6 +89,7 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
         _zlib = zlib_;
     }
 
+    ///@dev  must be the first initialize to be called
     function initializeMetadata(bytes calldata metadata_, bytes7[] memory imageTraits_)
         external
         onlyOwner
@@ -98,6 +99,7 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
         _imageTraits = imageTraits_;
     }
 
+    ///@dev  must be called after initializeMetadata().
     function initializeImages(bytes[] calldata images_, uint128[] calldata decompressedSizes_)
         external
         onlyOwner
@@ -123,6 +125,7 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
         }
     }
 
+    ///@dev  must be called after initializeImagesHardcoded()
     function initializeIcons(bytes[] calldata icons_, uint128[] calldata decompressedSizesIcons_)
         external
         onlyOwner

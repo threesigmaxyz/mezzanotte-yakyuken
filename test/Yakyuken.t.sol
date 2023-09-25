@@ -189,7 +189,7 @@ contract YakyukenTests is Test {
         _compareValueTraitStruct(metadata_.yakFillColors, ykFillCol, "Yak Fill Colors");
         _compareValueTraitStruct(metadata_.yakHoverColors, ykHvCol, "Yak Hover Colors");
         _compareValueTraitStruct(metadata_.texts, txts, "Rock Paper Scissors");
-        _compareIconStruct(_icons, icn, "Icons"); 
+        _compareIconStruct(_icons, icn, "Icons");
     }
 
     function test_process_bytes_info() external {
