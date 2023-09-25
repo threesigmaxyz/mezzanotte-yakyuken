@@ -37,6 +37,8 @@ contract YakyukenTests is Test {
     string[] public txtLoc;
     Yakyuken.Icon[] public icn;
 
+    Yakyuken.Icon[] private _icons = new Yakyuken.Icon[](4);
+
     error DifferentValueError(string vl1, string vl2, string loc);
 
     function setUp() external {
@@ -130,10 +132,12 @@ contract YakyukenTests is Test {
         bytes[] memory icons_ = new bytes[](4);
         uint128[] memory decompressedSizesIcons_ = new uint128[](4);
 
-        (icons_[0], decompressedSizesIcons_[0]) = _loadIcon("/svgPaths/icon/stars.svg", "stars", "yellow");
-        (icons_[1], decompressedSizesIcons_[1]) = _loadIcon("/svgPaths/icon/scribble.svg", "scribble", "red");
-        (icons_[2], decompressedSizesIcons_[2]) = _loadIcon("/svgPaths/icon/abstract.svg", "abstract", "black");
-        (icons_[3], decompressedSizesIcons_[3]) = _loadIcon("/svgPaths/icon/empty.svg", "none", "transparent");
+        (icons_[0], decompressedSizesIcons_[0], _icons[0]) = _loadIcon("/svgPaths/icon/stars.svg", "stars", "yellow");
+        (icons_[1], decompressedSizesIcons_[1], _icons[1]) = _loadIcon("/svgPaths/icon/scribble.svg", "scribble", "red");
+        (icons_[2], decompressedSizesIcons_[2], _icons[2]) =
+            _loadIcon("/svgPaths/icon/abstract.svg", "abstract", "black");
+        (icons_[3], decompressedSizesIcons_[3], _icons[3]) =
+            _loadIcon("/svgPaths/icon/empty.svg", "none", "transparent");
 
         ByteRepresentation[] memory nftInBytes_;
 
@@ -185,7 +189,7 @@ contract YakyukenTests is Test {
         _compareValueTraitStruct(metadata_.yakFillColors, ykFillCol, "Yak Fill Colors");
         _compareValueTraitStruct(metadata_.yakHoverColors, ykHvCol, "Yak Hover Colors");
         _compareValueTraitStruct(metadata_.texts, txts, "Rock Paper Scissors");
-        //_compareIconStruct(metadata_.icons, icn, "Icons"); // TODO: compare unzipping
+        _compareIconStruct(_icons, icn, "Icons"); 
     }
 
     function test_process_bytes_info() external {
@@ -426,10 +430,10 @@ contract YakyukenTests is Test {
         txts.push("\u7d19");
         txts.push("\u306f\u3055\u307f");
 
-        icn.push(Yakyuken.Icon("yellow", "Stars", _loadSVG("/svgPaths/icon/stars.svg"))); //
-        icn.push(Yakyuken.Icon("red", "Scribble", _loadSVG("/svgPaths/icon/scribble.svg")));
-        icn.push(Yakyuken.Icon("black", "Abstract", _loadSVG("/svgPaths/icon/abstract.svg")));
-        icn.push(Yakyuken.Icon("transparent", "None", _loadSVG("/svgPaths/icon/empty.svg")));
+        icn.push(Yakyuken.Icon("yellow", "stars", _loadSVG("/svgPaths/icon/stars.svg"))); //
+        icn.push(Yakyuken.Icon("red", "scribble", _loadSVG("/svgPaths/icon/scribble.svg")));
+        icn.push(Yakyuken.Icon("black", "abstract", _loadSVG("/svgPaths/icon/abstract.svg")));
+        icn.push(Yakyuken.Icon("transparent", "none", _loadSVG("/svgPaths/icon/empty.svg")));
     }
 
     function _compareValueTraitStruct(string[] memory s1_, string[] memory s2_, string memory name_) internal pure {
@@ -508,9 +512,10 @@ contract YakyukenTests is Test {
 
     function _loadIcon(string memory path_, string memory name_, string memory color_)
         internal
-        returns (bytes memory compressedImage_, uint128 decompressedSize_)
+        returns (bytes memory compressedImage_, uint128 decompressedSize_, Yakyuken.Icon memory iconStruct_)
     {
-        bytes memory image_ = abi.encode(Yakyuken.Icon(color_, name_, _loadSVG(path_)));
+        iconStruct_ = Yakyuken.Icon(color_, name_, _loadSVG(path_));
+        bytes memory image_ = abi.encode(iconStruct_);
         compressedImage_ = ZipUtils.zip(image_);
         decompressedSize_ = uint128(image_.length);
     }
