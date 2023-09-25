@@ -34,11 +34,6 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
         string name;
     }
 
-    struct ValueTrait {
-        string value;
-        uint256 weight;
-    }
-
     ///@dev must be in alphabetical order
     struct Icon {
         string color;
@@ -63,16 +58,16 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
 
     ///@dev  must be in alphabetical order
     struct Metadata {
-        ValueTrait[] backgroundColors;
-        ValueTrait[] baseFillColors;
-        ValueTrait[] finalShadowBrightness;
-        ValueTrait[] finalShadowColors;
-        ValueTrait[] glowTimes;
-        ValueTrait[] initialShadowBrightness;
-        ValueTrait[] initialShadowColors;
-        ValueTrait[] texts;
-        ValueTrait[] yakFillColors;
-        ValueTrait[] yakHoverColors;
+        string[] backgroundColors;
+        string[] baseFillColors;
+        string[] finalShadowBrightness;
+        string[] finalShadowColors;
+        string[] glowTimes;
+        string[] initialShadowBrightness;
+        string[] initialShadowColors;
+        string[] texts;
+        string[] yakFillColors;
+        string[] yakHoverColors;
     }
 
     error OutOfBondsTraitValueError(string trait);
@@ -94,7 +89,6 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
         _zlib = zlib_;
     }
 
-    // TODO only callable once by the deployer.
     function initializeMetadata(bytes calldata metadata_, bytes7[] memory imageTraits_)
         external
         onlyOwner
@@ -125,7 +119,7 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
         uint256 imageCount_ = totalImages_ - images_.length;
         for (uint256 i_; i_ < images_.length; i_++) {
             _write(bytes32(keccak256(abi.encode(i_ + imageCount_))), images_[i_]);
-            _imageMetadata.push(decompressedSizes_[i_]); 
+            _imageMetadata.push(decompressedSizes_[i_]);
         }
     }
 
@@ -146,16 +140,12 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
         Metadata memory metadata_ = abi.decode(_read(METADATA_POINTER), (Metadata));
 
         Image memory image_ = abi.decode(
-            ZLib(_zlib).inflate(
-                _read(bytes32(keccak256(abi.encode(data_.yak)))), _imageMetadata[data_.yak]
-            ),
-            (Image)
+            ZLib(_zlib).inflate(_read(bytes32(keccak256(abi.encode(data_.yak)))), _imageMetadata[data_.yak]), (Image)
         );
 
         Icon memory icon_ = abi.decode(
             ZLib(_zlib).inflate(
-                _read(bytes32(keccak256(abi.encode(data_.icon + MEMORY_OFFSET)))),
-                _iconMetadata[data_.icon]
+                _read(bytes32(keccak256(abi.encode(data_.icon + MEMORY_OFFSET)))), _iconMetadata[data_.icon]
             ),
             (Icon)
         );
@@ -185,16 +175,12 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
         Metadata memory metadata_ = abi.decode(_read(METADATA_POINTER), (Metadata));
 
         Image memory image_ = abi.decode(
-            ZLib(_zlib).inflate(
-                _read(bytes32(keccak256(abi.encode(data_.yak)))), _imageMetadata[data_.yak]
-            ),
-            (Image)
+            ZLib(_zlib).inflate(_read(bytes32(keccak256(abi.encode(data_.yak)))), _imageMetadata[data_.yak]), (Image)
         );
 
         Icon memory icon_ = abi.decode(
             ZLib(_zlib).inflate(
-                _read(bytes32(keccak256(abi.encode(data_.icon + MEMORY_OFFSET)))),
-                _iconMetadata[data_.icon]
+                _read(bytes32(keccak256(abi.encode(data_.icon + MEMORY_OFFSET)))), _iconMetadata[data_.icon]
             ),
             (Icon)
         );
@@ -266,17 +252,17 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
         Icon memory icon_
     ) internal pure returns (bytes memory) {
         return abi.encodePacked(
-            _getHeader(image_.viewBox, metadata_.backgroundColors[data_.backgroundColors].value),
+            _getHeader(image_.viewBox, metadata_.backgroundColors[data_.backgroundColors]),
             _getStyleHeader(
-                metadata_.initialShadowColors[data_.initialShadowColors].value,
-                metadata_.finalShadowColors[data_.finalShadowColors].value,
-                metadata_.initialShadowBrightness[data_.initialShadowBrightness].value,
-                metadata_.finalShadowBrightness[data_.finalShadowBrightness].value,
-                metadata_.baseFillColors[data_.baseFillColors].value,
-                metadata_.glowTimes[data_.glowTimes].value,
-                metadata_.yakFillColors[data_.yakFillColors].value,
-                metadata_.yakHoverColors[data_.yakHoverColors].value,
-                metadata_.yakFillColors[data_.yakFillColors].value
+                metadata_.initialShadowColors[data_.initialShadowColors],
+                metadata_.finalShadowColors[data_.finalShadowColors],
+                metadata_.initialShadowBrightness[data_.initialShadowBrightness],
+                metadata_.finalShadowBrightness[data_.finalShadowBrightness],
+                metadata_.baseFillColors[data_.baseFillColors],
+                metadata_.glowTimes[data_.glowTimes],
+                metadata_.yakFillColors[data_.yakFillColors],
+                metadata_.yakHoverColors[data_.yakHoverColors],
+                metadata_.yakFillColors[data_.yakFillColors]
             ),
             image_.path,
             _getIcon(icon_.path, image_.iconSize),
@@ -348,25 +334,25 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
                     '" },  { "trait_type": "Icon", "value": "',
                     iconName_,
                     '"},  { "trait_type": "Background Color", "value": "',
-                    metadata_.backgroundColors[data_.backgroundColors].value,
+                    metadata_.backgroundColors[data_.backgroundColors],
                     '" }, { "trait_type": "Initial Shadow Color", "value":"',
-                    metadata_.initialShadowColors[data_.initialShadowColors].value,
+                    metadata_.initialShadowColors[data_.initialShadowColors],
                     '" }, { "trait_type": "Initial Shadow Brightness", "value":"',
-                    metadata_.initialShadowBrightness[data_.initialShadowBrightness].value,
+                    metadata_.initialShadowBrightness[data_.initialShadowBrightness],
                     '" }, { "trait_type": "Final Shadow Color ", "value":"',
-                    metadata_.finalShadowColors[data_.finalShadowColors].value,
+                    metadata_.finalShadowColors[data_.finalShadowColors],
                     '" }, { "trait_type": "Final Shadow Brightness", "value":"',
-                    metadata_.finalShadowBrightness[data_.finalShadowBrightness].value,
+                    metadata_.finalShadowBrightness[data_.finalShadowBrightness],
                     '" }, { "trait_type": "Base Fill Colors", "value":"',
-                    metadata_.baseFillColors[data_.baseFillColors].value,
+                    metadata_.baseFillColors[data_.baseFillColors],
                     '" }, { "trait_type": "Glow Times", "value":"',
-                    metadata_.glowTimes[data_.glowTimes].value,
+                    metadata_.glowTimes[data_.glowTimes],
                     '" }, { "trait_type": "Yak Fill Colors", "value":"',
-                    metadata_.yakFillColors[data_.yakFillColors].value,
+                    metadata_.yakFillColors[data_.yakFillColors],
                     '" }, { "trait_type": "Hover Colors", "value":"',
-                    metadata_.yakHoverColors[data_.yakHoverColors].value,
+                    metadata_.yakHoverColors[data_.yakHoverColors],
                     '" }, { "trait_type": "Rock, Paper, Scissors", "value":"',
-                    metadata_.texts[data_.texts].value,
+                    metadata_.texts[data_.texts],
                     '"} ]'
                 )
             )

@@ -24,21 +24,20 @@ contract YakyukenTests is Test {
         string value;
     }
 
-    Yakyuken.ValueTrait[] public bckColors;
-    Yakyuken.ValueTrait[] public bFillColors;
-    Yakyuken.ValueTrait[] public initialShCol;
-    Yakyuken.ValueTrait[] public finalShCol;
-    Yakyuken.ValueTrait[] public initialShBri;
-    Yakyuken.ValueTrait[] public finalShBri;
-    Yakyuken.ValueTrait[] public glTimes;
-    Yakyuken.ValueTrait[] public ykFillCol;
-    Yakyuken.ValueTrait[] public ykHvCol;
-    Yakyuken.ValueTrait[] public txts;
-    Yakyuken.ValueTrait[] public txtLoc;
+    string[] public bckColors;
+    string[] public bFillColors;
+    string[] public initialShCol;
+    string[] public finalShCol;
+    string[] public initialShBri;
+    string[] public finalShBri;
+    string[] public glTimes;
+    string[] public ykFillCol;
+    string[] public ykHvCol;
+    string[] public txts;
+    string[] public txtLoc;
     Yakyuken.Icon[] public icn;
 
     error DifferentValueError(string vl1, string vl2, string loc);
-    error DifferentWeightError(uint256 vl1, uint256 vl2, string loc);
 
     function setUp() external {
         _setUpArrays();
@@ -301,133 +300,133 @@ contract YakyukenTests is Test {
 
     function _setUpArrays() internal {
         //Note: decided to hardcode the expected results so it is a different method than reading from the json file
-        bckColors.push(Yakyuken.ValueTrait("mistyrose", 5));
-        bckColors.push(Yakyuken.ValueTrait("linen", 5));
-        bckColors.push(Yakyuken.ValueTrait("peach", 1));
-        bckColors.push(Yakyuken.ValueTrait("yellow", 20));
-        bckColors.push(Yakyuken.ValueTrait("lemonchiffon", 6));
-        bckColors.push(Yakyuken.ValueTrait("black", 19));
-        bckColors.push(Yakyuken.ValueTrait("red", 24));
-        bckColors.push(Yakyuken.ValueTrait("blue", 6));
-        bckColors.push(Yakyuken.ValueTrait("deepskyblue", 6));
-        bckColors.push(Yakyuken.ValueTrait("mediumblue", 1));
-        bckColors.push(Yakyuken.ValueTrait("antiquewhite", 5));
-        bckColors.push(Yakyuken.ValueTrait("darkblue", 1));
-        bckColors.push(Yakyuken.ValueTrait("aquamarine", 1));
+        bckColors.push("mistyrose");
+        bckColors.push("linen");
+        bckColors.push("peach");
+        bckColors.push("yellow");
+        bckColors.push("lemonchiffon");
+        bckColors.push("black");
+        bckColors.push("red");
+        bckColors.push("blue");
+        bckColors.push("deepskyblue");
+        bckColors.push("mediumblue");
+        bckColors.push("antiquewhite");
+        bckColors.push("darkblue");
+        bckColors.push("aquamarine");
 
-        bFillColors.push(Yakyuken.ValueTrait("beige", 7));
-        bFillColors.push(Yakyuken.ValueTrait("softpink", 14));
-        bFillColors.push(Yakyuken.ValueTrait("waterblue", 12));
-        bFillColors.push(Yakyuken.ValueTrait("lightneon", 7));
-        bFillColors.push(Yakyuken.ValueTrait("wintergreen", 12));
-        bFillColors.push(Yakyuken.ValueTrait("blue", 12));
-        bFillColors.push(Yakyuken.ValueTrait("yellow", 12));
-        bFillColors.push(Yakyuken.ValueTrait("mediumspringgreen", 11));
-        bFillColors.push(Yakyuken.ValueTrait("cadetblue", 1));
-        bFillColors.push(Yakyuken.ValueTrait("violet", 1));
-        bFillColors.push(Yakyuken.ValueTrait("thistle", 1));
-        bFillColors.push(Yakyuken.ValueTrait("plum", 1));
-        bFillColors.push(Yakyuken.ValueTrait("mediumvioletred", 1));
-        bFillColors.push(Yakyuken.ValueTrait("black", 8));
+        bFillColors.push("beige");
+        bFillColors.push("softpink");
+        bFillColors.push("waterblue");
+        bFillColors.push("lightneon");
+        bFillColors.push("wintergreen");
+        bFillColors.push("blue");
+        bFillColors.push("yellow");
+        bFillColors.push("mediumspringgreen");
+        bFillColors.push("cadetblue");
+        bFillColors.push("violet");
+        bFillColors.push("thistle");
+        bFillColors.push("plum");
+        bFillColors.push("mediumvioletred");
+        bFillColors.push("black");
 
-        initialShCol.push(Yakyuken.ValueTrait("orange", 12));
-        initialShCol.push(Yakyuken.ValueTrait("navy", 12));
-        initialShCol.push(Yakyuken.ValueTrait("white", 12));
-        initialShCol.push(Yakyuken.ValueTrait("red", 12));
-        initialShCol.push(Yakyuken.ValueTrait("blue", 12));
-        initialShCol.push(Yakyuken.ValueTrait("yellow", 24));
-        initialShCol.push(Yakyuken.ValueTrait("pink", 1));
-        initialShCol.push(Yakyuken.ValueTrait("cyan", 15));
+        initialShCol.push("orange");
+        initialShCol.push("navy");
+        initialShCol.push("white");
+        initialShCol.push("red");
+        initialShCol.push("blue");
+        initialShCol.push("yellow");
+        initialShCol.push("pink");
+        initialShCol.push("cyan");
 
-        finalShCol.push(Yakyuken.ValueTrait("black", 8));
-        finalShCol.push(Yakyuken.ValueTrait("lavender", 6));
-        finalShCol.push(Yakyuken.ValueTrait("white", 12));
-        finalShCol.push(Yakyuken.ValueTrait("red", 6));
-        finalShCol.push(Yakyuken.ValueTrait("yellow", 6));
-        finalShCol.push(Yakyuken.ValueTrait("mintcream", 12));
-        finalShCol.push(Yakyuken.ValueTrait("paleolivegreen", 6));
-        finalShCol.push(Yakyuken.ValueTrait("mossygreen", 6));
-        finalShCol.push(Yakyuken.ValueTrait("pear", 12));
-        finalShCol.push(Yakyuken.ValueTrait("blue", 10));
-        finalShCol.push(Yakyuken.ValueTrait("marine", 6));
-        finalShCol.push(Yakyuken.ValueTrait("pink", 10));
+        finalShCol.push("black");
+        finalShCol.push("lavender");
+        finalShCol.push("white");
+        finalShCol.push("red");
+        finalShCol.push("yellow");
+        finalShCol.push("mintcream");
+        finalShCol.push("paleolivegreen");
+        finalShCol.push("mossygreen");
+        finalShCol.push("pear");
+        finalShCol.push("blue");
+        finalShCol.push("marine");
+        finalShCol.push("pink");
 
-        initialShBri.push(Yakyuken.ValueTrait("1", 5));
-        initialShBri.push(Yakyuken.ValueTrait("25", 5));
-        initialShBri.push(Yakyuken.ValueTrait("50", 10));
-        initialShBri.push(Yakyuken.ValueTrait("75", 3));
-        initialShBri.push(Yakyuken.ValueTrait("100", 40));
-        initialShBri.push(Yakyuken.ValueTrait("125", 3));
-        initialShBri.push(Yakyuken.ValueTrait("150", 2));
-        initialShBri.push(Yakyuken.ValueTrait("175", 5));
-        initialShBri.push(Yakyuken.ValueTrait("200", 5));
-        initialShBri.push(Yakyuken.ValueTrait("300", 10));
-        initialShBri.push(Yakyuken.ValueTrait("4000", 12));
+        initialShBri.push("1");
+        initialShBri.push("25");
+        initialShBri.push("50");
+        initialShBri.push("75");
+        initialShBri.push("100");
+        initialShBri.push("125");
+        initialShBri.push("150");
+        initialShBri.push("175");
+        initialShBri.push("200");
+        initialShBri.push("300");
+        initialShBri.push("4000");
 
-        finalShBri.push(Yakyuken.ValueTrait("25", 10));
-        finalShBri.push(Yakyuken.ValueTrait("50", 10));
-        finalShBri.push(Yakyuken.ValueTrait("75", 10));
-        finalShBri.push(Yakyuken.ValueTrait("100", 15));
-        finalShBri.push(Yakyuken.ValueTrait("125", 3));
-        finalShBri.push(Yakyuken.ValueTrait("150", 2));
-        finalShBri.push(Yakyuken.ValueTrait("175", 15));
-        finalShBri.push(Yakyuken.ValueTrait("200", 15));
-        finalShBri.push(Yakyuken.ValueTrait("3000", 10));
-        finalShBri.push(Yakyuken.ValueTrait("5000", 10));
+        finalShBri.push("25");
+        finalShBri.push("50");
+        finalShBri.push("75");
+        finalShBri.push("100");
+        finalShBri.push("125");
+        finalShBri.push("150");
+        finalShBri.push("175");
+        finalShBri.push("200");
+        finalShBri.push("3000");
+        finalShBri.push("5000");
 
-        glTimes.push(Yakyuken.ValueTrait("1", 4));
-        glTimes.push(Yakyuken.ValueTrait("5", 2));
-        glTimes.push(Yakyuken.ValueTrait(".5", 20));
-        glTimes.push(Yakyuken.ValueTrait(".2", 5));
-        glTimes.push(Yakyuken.ValueTrait("32", 1));
-        glTimes.push(Yakyuken.ValueTrait("1.5", 6));
-        glTimes.push(Yakyuken.ValueTrait(".9", 16));
-        glTimes.push(Yakyuken.ValueTrait("3", 8));
-        glTimes.push(Yakyuken.ValueTrait("65", 1));
-        glTimes.push(Yakyuken.ValueTrait("2", 5));
-        glTimes.push(Yakyuken.ValueTrait("3", 2));
-        glTimes.push(Yakyuken.ValueTrait("4", 3));
-        glTimes.push(Yakyuken.ValueTrait("5.5", 6));
-        glTimes.push(Yakyuken.ValueTrait("6", 5));
-        glTimes.push(Yakyuken.ValueTrait("7", 3));
-        glTimes.push(Yakyuken.ValueTrait("8", 2));
-        glTimes.push(Yakyuken.ValueTrait(".01", 5));
-        glTimes.push(Yakyuken.ValueTrait(".3", 4));
-        glTimes.push(Yakyuken.ValueTrait(".4", 2));
+        glTimes.push("1");
+        glTimes.push("5");
+        glTimes.push(".5");
+        glTimes.push(".2");
+        glTimes.push("32");
+        glTimes.push("1.5");
+        glTimes.push(".9");
+        glTimes.push("3");
+        glTimes.push("65");
+        glTimes.push("2");
+        glTimes.push("3");
+        glTimes.push("4");
+        glTimes.push("5.5");
+        glTimes.push("6");
+        glTimes.push("7");
+        glTimes.push("8");
+        glTimes.push(".01");
+        glTimes.push(".3");
+        glTimes.push(".4");
 
-        ykFillCol.push(Yakyuken.ValueTrait("lightorange", 9));
-        ykFillCol.push(Yakyuken.ValueTrait("lavenderblush", 9));
-        ykFillCol.push(Yakyuken.ValueTrait("powderblue", 9));
-        ykFillCol.push(Yakyuken.ValueTrait("navy", 9));
-        ykFillCol.push(Yakyuken.ValueTrait("neon", 8));
-        ykFillCol.push(Yakyuken.ValueTrait("blue", 8));
-        ykFillCol.push(Yakyuken.ValueTrait("blue", 8));
-        ykFillCol.push(Yakyuken.ValueTrait("pink", 8));
-        ykFillCol.push(Yakyuken.ValueTrait("yellow", 8));
-        ykFillCol.push(Yakyuken.ValueTrait("pastel", 8));
-        ykFillCol.push(Yakyuken.ValueTrait("turqouise", 8));
-        ykFillCol.push(Yakyuken.ValueTrait("honeydew", 8));
+        ykFillCol.push("lightorange");
+        ykFillCol.push("lavenderblush");
+        ykFillCol.push("powderblue");
+        ykFillCol.push("navy");
+        ykFillCol.push("neon");
+        ykFillCol.push("blue");
+        ykFillCol.push("blue");
+        ykFillCol.push("pink");
+        ykFillCol.push("yellow");
+        ykFillCol.push("pastel");
+        ykFillCol.push("turqouise");
+        ykFillCol.push("honeydew");
 
-        ykHvCol.push(Yakyuken.ValueTrait("goldenrod", 10));
-        ykHvCol.push(Yakyuken.ValueTrait("mintcream", 5));
-        ykHvCol.push(Yakyuken.ValueTrait("red", 8));
-        ykHvCol.push(Yakyuken.ValueTrait("lightblue", 18));
-        ykHvCol.push(Yakyuken.ValueTrait("aquamarine", 10));
-        ykHvCol.push(Yakyuken.ValueTrait("coral", 10));
-        ykHvCol.push(Yakyuken.ValueTrait("white", 8));
-        ykHvCol.push(Yakyuken.ValueTrait("lavenderblush", 4));
-        ykHvCol.push(Yakyuken.ValueTrait("verylightpink", 4));
-        ykHvCol.push(Yakyuken.ValueTrait("pink", 5));
-        ykHvCol.push(Yakyuken.ValueTrait("whitesmoke", 8));
-        ykHvCol.push(Yakyuken.ValueTrait("lavender", 7));
-        ykHvCol.push(Yakyuken.ValueTrait("lightorange", 2));
-        ykHvCol.push(Yakyuken.ValueTrait("yellow", 1));
-        ykHvCol.push(Yakyuken.ValueTrait("black", 1));
+        ykHvCol.push("goldenrod");
+        ykHvCol.push("mintcream");
+        ykHvCol.push("red");
+        ykHvCol.push("lightblue");
+        ykHvCol.push("aquamarine");
+        ykHvCol.push("coral");
+        ykHvCol.push("white");
+        ykHvCol.push("lavenderblush");
+        ykHvCol.push("verylightpink");
+        ykHvCol.push("pink");
+        ykHvCol.push("whitesmoke");
+        ykHvCol.push("lavender");
+        ykHvCol.push("lightorange");
+        ykHvCol.push("yellow");
+        ykHvCol.push("black");
 
         //TODO: texts is being ignored because one of the char is not recognized by solidity
-        //txts.push(Yakyuken.ValueTrait("石", 33));
-        //txts.push(Yakyuken.ValueTrait("紙", 33));
-        //txts.push(Yakyuken.ValueTrait("はさみ", 34));
+        //txts.push("石", 33));
+        //txts.push("紙", 33));
+        //txts.push("はさみ", 34));
 
         icn.push(Yakyuken.Icon("yellow", "Stars", _loadSVG("/svgPaths/icon/stars.svg"))); //
         icn.push(Yakyuken.Icon("red", "Scribble", _loadSVG("/svgPaths/icon/scribble.svg")));
@@ -435,19 +434,11 @@ contract YakyukenTests is Test {
         icn.push(Yakyuken.Icon("transparent", "None", _loadSVG("/svgPaths/icon/empty.svg")));
     }
 
-    function _compareValueTraitStruct(
-        Yakyuken.ValueTrait[] memory s1_,
-        Yakyuken.ValueTrait[] memory s2_,
-        string memory name_
-    ) internal pure {
+    function _compareValueTraitStruct(string[] memory s1_, string[] memory s2_, string memory name_) internal pure {
         require(s1_.length == s2_.length, "Array of structs do not match, different lengths");
         for (uint256 i_ = 0; i_ < s1_.length; i_++) {
-            if (keccak256(abi.encodePacked((s1_[i_].value))) != keccak256(abi.encodePacked((s2_[i_].value)))) {
-                revert DifferentValueError(s1_[i_].value, s2_[i_].value, name_);
-            }
-
-            if (s1_[i_].weight != s2_[i_].weight) {
-                revert DifferentWeightError(s1_[i_].weight, s2_[i_].weight, name_);
+            if (keccak256(abi.encodePacked((s1_[i_]))) != keccak256(abi.encodePacked((s2_[i_])))) {
+                revert DifferentValueError(s1_[i_], s2_[i_], name_);
             }
         }
     }
@@ -467,7 +458,6 @@ contract YakyukenTests is Test {
             if (keccak256(abi.encodePacked((s1_[i_].name))) != keccak256(abi.encodePacked((s2_[i_].name)))) {
                 revert DifferentValueError(s1_[i_].name, s2_[i_].name, name_);
             }
-
         }
     }
 
