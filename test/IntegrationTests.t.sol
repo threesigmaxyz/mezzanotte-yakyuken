@@ -11,8 +11,11 @@ import { ZipUtils } from "../common/ZipUtils.sol";
 
 import { Yakyuken } from "../src/Yakyuken.sol";
 import { ZLib } from "../src/zip/ZLib.sol";
+import { Yakyuken } from "src/Yakyuken.sol";
+import { MezzanoteSale } from "lib/mezzanote-sale/src/MezzanoteSale.sol";
+import { MerkleTreeTest } from "lib/mezzanote-sale/src/dependencies/threesigma-contracts/contracts/foundry-test-helpers/MerkleTreeTestHelper.sol";
 
-contract YakyukenIntegrationTests is Test {
+contract YakyukenIntegrationTests is MerkleTreeTest {
     using Strings for uint256;
     using stdJson for string;
 
@@ -45,6 +48,7 @@ contract YakyukenIntegrationTests is Test {
 
     function setUp() external {
         _setUpArrays();
+        setMerkleTree("lib/mezzanote-sale/snapshot/Data/OwnersSnapshot.csv");
         _yakyuken = new Yakyuken(address(new ZLib()));
 
         // READ JSON CONFIG DATA
@@ -172,16 +176,18 @@ contract YakyukenIntegrationTests is Test {
     }
 
     function test_integration_test() external {
+        
         vm.createSelectFork("https://eth-mainnet.g.alchemy.com/v2/nvSsdsnmevTS18z6U5lBnUrV-5sMuNNP");
 
         uint256 numberOwners_ = 2549;
         for (uint256 i_ = 0; i_ < numberOwners_; i_++){
             _owners.push(vm.parseAddress(vm.readLine("lib/mezzanote-sale/snapshot/Data/OwnersSnapshot.csv")));
-            console2.log(_owners[i_]);
         }
 
-        address saleContract_ = 0x9cFBEfda7d3dC8F0E55aEA40cc2F4e0e595A9D39;
-        address mezzanotteContract_ = 0xAD908C887ee36A746De5A9496f3fB4053c6317F6;
+        //MezzanoteSale saleContract_ = MezzanoteSale(0x9cFBEfda7d3dC8F0E55aEA40cc2F4e0e595A9D39);
+        //Yakyuken mezzanotteContract_ = Yakyuken(0xAD908C887ee36A746De5A9496f3fB4053c6317F6);
+
+
 
     }
 
