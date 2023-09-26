@@ -30,7 +30,7 @@ contract Deploy is Script {
     uint128[] private _decompressedSizesIcons = new uint128[](4);
     bytes private _metadataDetails;
     bytes7[] private _infoArray;
-    bytes7[] private _sampleInfoArray;
+    bytes7 private _sampleInfo;
 
     uint64 private SALE_START = uint64(block.timestamp);
     bytes32 private constant WHITELIST_ROOT = 0x6b4af07aa40656d73117e1988ad7754041c2fafd690afe6624e92e1efd6fd7ce; // Get this from the lib mezzanote sale
@@ -153,8 +153,7 @@ contract Deploy is Script {
         _infoArray = new bytes7[](nftInBytes_.length);
         _infoArray = infoArray_;
 
-        _sampleInfoArray = new bytes7[](1);
-        _sampleInfoArray[0] = bytes7(bytes(nftInBytes_[0].value));
+        _sampleInfo = bytes7(bytes(nftInBytes_[0].value));
     }
 
     /// @dev You can send multiple transactions inside a single script.
@@ -165,7 +164,7 @@ contract Deploy is Script {
         Yakyuken _yakyuken = new Yakyuken(address(new ZLib()));
 
         // Deploy SVG files.
-        _yakyuken.initializeMetadata(_metadataDetails, _sampleInfoArray);
+        _yakyuken.initializeMetadata(_metadataDetails, _sampleInfo);
         _yakyuken.initializeImages(_images, _decompressedSizes);
         _yakyuken.initializeImagesHardcoded(_imagesHardcoded, _decompressedSizesHardcoded, _totalImages);
         _yakyuken.initializeIcons(_icons, _decompressedSizesIcons);
