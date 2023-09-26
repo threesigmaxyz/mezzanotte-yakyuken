@@ -153,12 +153,11 @@ contract YakyukenIntegrationTests is Test {
         string memory inputData_ = vm.readFile(inputPath_);
         bytes memory bytesData_ = inputData_.parseRaw(".");
         nftInBytes_ = abi.decode(bytesData_, (ByteRepresentation[]));
-        bytes7[] memory sampleInfoArray_ = new bytes7[](1);
         bytes7[] memory infoArray_ = new bytes7[](nftInBytes_.length);
 
         _infoArray = new bytes7[](nftInBytes_.length);
 
-        sampleInfoArray_[0] = bytes7(bytes(nftInBytes_[0].value));
+        bytes7 sampleInfo_ =  bytes7(bytes(nftInBytes_[0].value));
 
         for (uint256 i_ = 0; i_ < infoArray_.length; i_++) {
             infoArray_[nftInBytes_[i_].tokenId] = bytes7(bytes(nftInBytes_[i_].value));
@@ -166,7 +165,7 @@ contract YakyukenIntegrationTests is Test {
 
         _infoArray = infoArray_;
 
-        _yakyuken.initializeMetadata(metadataDetails_, sampleInfoArray_);
+        _yakyuken.initializeMetadata(metadataDetails_, sampleInfo_);
         _yakyuken.initializeImages(images_, decompressedSizes_);
         _yakyuken.initializeImagesHardcoded(imagesHardcoded_, decompressedSizesHardcoded_, totalImages_);
         _yakyuken.initializeIcons(icons_, decompressedSizesIcons_);
