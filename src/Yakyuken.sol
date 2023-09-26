@@ -26,7 +26,6 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
 
     bool[4] private _initialized;
     address private _saleContract;
-    bool private _revealed;
 
     struct Image {
         string path;
@@ -72,13 +71,12 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
         string[] yakHoverColors;
     }
 
-    error OutOfBondsTraitValueError(string trait);
+    error OutOfBondsTraitValueError();
     error AlreadyInitializedError();
     error NotSaleContractError();
 
     modifier initialize(uint256 id_) {
-        if (_initialized[id_]) revert AlreadyInitializedError();
-        _initialized[id_] = true;
+        _initialize(id_);
         _;
     }
 
@@ -145,13 +143,12 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
     }
 
     function reveal(bytes7[] memory imageTraits_) external onlyOwner {
-        _revealed = true;
         _imageTraits = imageTraits_;
     }
 
     function tokenURI(uint256 tokenId_) public view override returns (string memory) {
         MetadataBytes memory data_;
-        if (_revealed) {
+        if (_imageTraits.length > 0) {
             data_ = processMetadataAsBytes(_imageTraits[tokenId_]);
         } else {
             data_ = processMetadataAsBytes(_sampleImageTraits[0]);
@@ -192,7 +189,7 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
 
     function generateSVGfromBytes(uint256 tokenId_) external view returns (string memory svg_) {
         MetadataBytes memory data_;
-        if (_revealed) {
+        if (_imageTraits.length > 0) {
             data_ = processMetadataAsBytes(_imageTraits[tokenId_]);
         } else {
             data_ = processMetadataAsBytes(_sampleImageTraits[0]);
@@ -215,52 +212,18 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
 
     function processMetadataAsBytes(bytes7 metadataInfo_) public view returns (MetadataBytes memory data_) {
         Metadata memory metadata_ = abi.decode(_read(METADATA_POINTER), (Metadata));
-
-        data_.glowTimes = uint8(metadataInfo_[0]);
-        if (data_.glowTimes > metadata_.glowTimes.length) revert OutOfBondsTraitValueError("glowTimes");
-
-        data_.backgroundColors = uint8(metadataInfo_[1]);
-        if (data_.backgroundColors > metadata_.backgroundColors.length) {
-            revert OutOfBondsTraitValueError("backgroundColors");
-        }
-
-        data_.yakHoverColors = uint8(metadataInfo_[2] >> 4);
-        if (data_.yakHoverColors > metadata_.yakHoverColors.length) revert OutOfBondsTraitValueError("yakHoverColors");
-
-        data_.finalShadowColors = uint8(metadataInfo_[2] & 0x0F);
-        if (data_.finalShadowColors > metadata_.finalShadowColors.length) {
-            revert OutOfBondsTraitValueError("finalShadowColors");
-        }
-
-        data_.baseFillColors = uint8(metadataInfo_[3] >> 4);
-        if (data_.baseFillColors > metadata_.baseFillColors.length) revert OutOfBondsTraitValueError("baseFillColors");
-
-        data_.yakFillColors = uint8(metadataInfo_[3] & 0x0F);
-        if (data_.yakFillColors > metadata_.yakFillColors.length) revert OutOfBondsTraitValueError("yakFillColors");
-
-        data_.yak = uint8(metadataInfo_[4] >> 4);
-        if (data_.yak > _imageMetadata.length) revert OutOfBondsTraitValueError("yak/character");
-
-        data_.initialShadowColors = uint8(metadataInfo_[4] & 0x0F);
-        if (data_.initialShadowColors > metadata_.initialShadowColors.length) {
-            revert OutOfBondsTraitValueError("initialShadowColors");
-        }
-
-        data_.initialShadowBrightness = uint8(metadataInfo_[5] >> 4);
-        if (data_.initialShadowBrightness > metadata_.initialShadowBrightness.length) {
-            revert OutOfBondsTraitValueError("initialShadowBrightness");
-        }
-
-        data_.finalShadowBrightness = uint8(metadataInfo_[5] & 0x0F);
-        if (data_.finalShadowBrightness > metadata_.finalShadowBrightness.length) {
-            revert OutOfBondsTraitValueError("finalShadowBrightness");
-        }
-
-        data_.icon = uint8(metadataInfo_[6] >> 4);
-        if (data_.icon > _iconMetadata.length) revert OutOfBondsTraitValueError("icon");
-
-        data_.texts = uint8(metadataInfo_[6] & 0x0F);
-        if (data_.texts > metadata_.texts.length) revert OutOfBondsTraitValueError("texts");
+        data_.glowTimes = _getTraitFromMask(metadataInfo_, 0, 0, metadata_.glowTimes.length);
+        data_.backgroundColors = _getTraitFromMask(metadataInfo_, 1, 0, metadata_.backgroundColors.length);
+        data_.yakHoverColors = _getTraitFromMask(metadataInfo_, 2, 4, metadata_.yakHoverColors.length);
+        data_.finalShadowColors = _getTraitFromMask(metadataInfo_, 2, 10, metadata_.finalShadowColors.length);
+        data_.baseFillColors = _getTraitFromMask(metadataInfo_, 3, 4, metadata_.baseFillColors.length);
+        data_.yakFillColors = _getTraitFromMask(metadataInfo_, 3, 10, metadata_.yakFillColors.length);
+        data_.yak = _getTraitFromMask(metadataInfo_, 4, 4, _imageMetadata.length);
+        data_.initialShadowColors = _getTraitFromMask(metadataInfo_, 4, 10, metadata_.initialShadowColors.length);
+        data_.initialShadowBrightness = _getTraitFromMask(metadataInfo_, 5, 4, metadata_.initialShadowBrightness.length);
+        data_.finalShadowBrightness = _getTraitFromMask(metadataInfo_, 5, 10, metadata_.finalShadowBrightness.length);
+        data_.icon = _getTraitFromMask(metadataInfo_, 6, 4, _iconMetadata.length);
+        data_.texts = _getTraitFromMask(metadataInfo_, 6, 10, metadata_.texts.length);
     }
 
     function mint(address to_, uint256 tokenId_) external onlySale {
@@ -269,6 +232,18 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
 
     function setSaleContract(address sale_) external onlyOwner {
         _saleContract = sale_;
+    }
+
+    function _initialize(uint256 id_) internal {
+        if (_initialized[id_]) revert AlreadyInitializedError();
+        _initialized[id_] = true;
+    }
+
+    function _getTraitFromMask(bytes7 mask_, uint8 pos_, uint8 shift_, uint256 max_) internal pure returns(uint8 trait_) {
+        if (shift_ == 0) trait_ = uint8(mask_[pos_]);
+        else if (shift_ == 4) trait_ = uint8(mask_[pos_] >> 4);
+        else trait_ = uint8(mask_[pos_] & 0x0F);
+        if (trait_ >= max_) revert OutOfBondsTraitValueError();
     }
 
     function _generateSVGfromBytes(

@@ -33,7 +33,7 @@ contract Deploy is Script {
     bytes7[] private _sampleInfoArray;
 
     uint64 private SALE_START = uint64(block.timestamp);
-    bytes32 private constant WHITELIST_ROOT = 0xe8e77ed6ab11730b89b766143bd76a141b22383574119fca2fd81577d437661e; // Get this from the lib mezzanote sale
+    bytes32 private constant WHITELIST_ROOT = 0x6b4af07aa40656d73117e1988ad7754041c2fafd690afe6624e92e1efd6fd7ce; // Get this from the lib mezzanote sale
     uint64 private constant WHITELIST_SALE_DURATION = 2 hours;
     uint64 private constant PRICE = 7;
 
@@ -159,7 +159,7 @@ contract Deploy is Script {
 
     /// @dev You can send multiple transactions inside a single script.
     function run() public {
-        vm.startBroadcast(vm.envUint("PRIVATE_KEY_ANVIL"));
+        vm.startBroadcast(vm.envUint("PRIVATE_KEY"));
 
         // Deploy Yakyuken contract with ZLib compression.
         Yakyuken _yakyuken = new Yakyuken(address(new ZLib()));
