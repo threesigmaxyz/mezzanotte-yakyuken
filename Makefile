@@ -60,7 +60,7 @@ deploy-anvil :;
 # Deploy the contract to remote network and verify the code
 deploy-network :;
 	@export FOUNDRY_PROFILE=deploy && \
-	forge script script/01_Deploy.s.sol:Deploy -f ${network} --broadcast --verify --delay 20 --retries 10 -vvvv && \
+	forge script script/01_Deploy.s.sol:Deploy -f ${network} --broadcast --verify --delay 20 --retries 10 -vvvv --ffi && \
 	export FOUNDRY_PROFILE=default
 
 run-script :;
