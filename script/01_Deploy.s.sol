@@ -4,10 +4,12 @@ pragma solidity ^0.8.0;
 import { Script } from "@forge-std/Script.sol";
 import { stdJson } from "@forge-std/StdJson.sol";
 
-import { Strings } from "@openzeppelin/utils/Strings.sol";
+import { Strings } from "@openzeppelin/contracts/utils/Strings.sol";
 
 import { ZipUtils } from "../common/ZipUtils.sol";
 import { Yakyuken } from "../src/Yakyuken.sol";
+
+import { MezzanoteSale } from "lib/mezzanote-sale/src/MezzanoteSale.sol";
 import { ZLib } from "../src/zip/ZLib.sol";
 
 contract Deploy is Script {
@@ -29,6 +31,11 @@ contract Deploy is Script {
     bytes private _metadataDetails;
     bytes7[] private _infoArray;
     bytes7[] private _sampleInfoArray;
+
+    uint64 private constant SALE_START = 99;
+    bytes32 private constant WHITELIST_ROOT = 0x02cc448a2b0e57b10783ff4981015c8cb4728a174fa661d2a19eaa2ce48b2dd0; // Get this from the lib mezzanote sale
+    uint64 private constant WHITELIST_SALE_DURATION = 2 hours;
+    uint64 private constant PRICE = 0.069 ether;
 
     function setUp() public {
         // READ JSON CONFIG DATA
@@ -152,7 +159,7 @@ contract Deploy is Script {
 
     /// @dev You can send multiple transactions inside a single script.
     function run() public {
-        vm.startBroadcast();
+        vm.startBroadcast(vm.envUint("PRIVATE_KEY_ANVIL"));
 
         // Deploy Yakyuken contract with ZLib compression.
         Yakyuken _yakyuken = new Yakyuken(address(new ZLib()));
@@ -162,6 +169,9 @@ contract Deploy is Script {
         _yakyuken.initializeImages(_images, _decompressedSizes);
         _yakyuken.initializeImagesHardcoded(_imagesHardcoded, _decompressedSizesHardcoded, _totalImages);
         _yakyuken.initializeIcons(_icons, _decompressedSizesIcons);
+
+        // Deploy MezzanoteSale contract
+        new MezzanoteSale(address(_yakyuken), SALE_START, WHITELIST_ROOT, WHITELIST_SALE_DURATION, PRICE);
 
         vm.stopBroadcast();
     }

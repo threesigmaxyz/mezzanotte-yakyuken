@@ -3,7 +3,6 @@ pragma solidity ^0.8.0;
 
 import "forge-std/Script.sol";
 import { Vm } from "@forge-std/Vm.sol";
-import { console2 } from "@forge-std/console2.sol";
 
 library ZipUtils {
     Vm private constant vm = Vm(address(uint160(uint256(keccak256("hevm cheat code")))));

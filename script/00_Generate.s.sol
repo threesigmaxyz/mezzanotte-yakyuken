@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import { Script } from "@forge-std/Script.sol";
 import { console2 } from "@forge-std/console2.sol";
 
-import { Strings } from "@openzeppelin/utils/Strings.sol";
+import { Strings } from "@openzeppelin/contracts/utils/Strings.sol";
 
 import { ZipUtils } from "../common/ZipUtils.sol";
 

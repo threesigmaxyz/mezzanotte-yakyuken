@@ -5,7 +5,7 @@ import { Test } from "@forge-std/Test.sol";
 import { console2 } from "@forge-std/console2.sol";
 import { stdJson } from "@forge-std/StdJson.sol";
 
-import { Strings } from "@openzeppelin/utils/Strings.sol";
+import { Strings } from "@openzeppelin/contracts/utils/Strings.sol";
 
 import { ZipUtils } from "../common/ZipUtils.sol";
 

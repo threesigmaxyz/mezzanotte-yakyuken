@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import { Ownable } from "@openzeppelin/access/Ownable.sol";
-import { ERC721 } from "@openzeppelin/token/ERC721/ERC721.sol";
-import { ERC721URIStorage } from "@openzeppelin/token/ERC721/extensions/ERC721URIStorage.sol";
-import { Base64 } from "@openzeppelin/utils/Base64.sol";
-import { Strings } from "@openzeppelin/utils/Strings.sol";
+import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
+import { ERC721 } from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import { ERC721URIStorage } from "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+import { Base64 } from "@openzeppelin/contracts/utils/Base64.sol";
+import { Strings } from "@openzeppelin/contracts/utils/Strings.sol";
 
 import { ERC721B } from "./ERC721B.sol";
 import { ZLib } from "./zip/ZLib.sol";
