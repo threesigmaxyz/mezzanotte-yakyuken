@@ -32,10 +32,10 @@ contract Deploy is Script {
     bytes7[] private _infoArray;
     bytes7[] private _sampleInfoArray;
 
-    uint64 private constant SALE_START = 99;
-    bytes32 private constant WHITELIST_ROOT = 0x02cc448a2b0e57b10783ff4981015c8cb4728a174fa661d2a19eaa2ce48b2dd0; // Get this from the lib mezzanote sale
+    uint64 private SALE_START = uint64(block.timestamp);
+    bytes32 private constant WHITELIST_ROOT = 0xe8e77ed6ab11730b89b766143bd76a141b22383574119fca2fd81577d437661e; // Get this from the lib mezzanote sale
     uint64 private constant WHITELIST_SALE_DURATION = 2 hours;
-    uint64 private constant PRICE = 0.069 ether;
+    uint64 private constant PRICE = 7;
 
     function setUp() public {
         // READ JSON CONFIG DATA
