@@ -74,7 +74,7 @@ contract Deploy is Script {
         );
         (images_[5], decompressedSizes_[5]) = _loadImage(
             "/svgPaths/yak/sport.svg",
-            "215.709 2.143 566.847 499.207",
+            "130.709 2.143 640 499.207",
             "0",
             "width=\"300px\" height=\"100px\" viewbox=\"115.709 1.143 466.847 499.207\"",
             "Sport"
