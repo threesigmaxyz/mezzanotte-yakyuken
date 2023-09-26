@@ -8,10 +8,7 @@ clean :;
 
 # Install dependencies
 install :;
-	@forge install foundry-rs/forge-std@master --no-commit && \
-	forge install openzeppelin/openzeppelin-contracts@master --no-commit && \
-	forge install transmissions11/solmate@main --no-commit && \
-	forge install BlockChainCaffe/Base64.sol --no-commit
+	@forge install
 
 # Update dependencies
 update :;
