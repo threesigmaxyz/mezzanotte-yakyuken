@@ -140,7 +140,7 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
         uint256 iconCount_ = icons_.length;
         for (uint256 j_; j_ < iconCount_; j_++) {
             _write(bytes32(keccak256(abi.encode(j_ + MEMORY_OFFSET))), icons_[j_]);
-            _iconMetadata.push(decompressedSizesIcons_[j_]); // TODO pass as init argument
+            _iconMetadata.push(decompressedSizesIcons_[j_]);
         }
     }
 
@@ -151,12 +151,12 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
 
     function tokenURI(uint256 tokenId_) public view override returns (string memory) {
         MetadataBytes memory data_;
-        if(_revealed){
+        if (_revealed) {
             data_ = processMetadataAsBytes(_imageTraits[tokenId_]);
-        }else {
+        } else {
             data_ = processMetadataAsBytes(_sampleImageTraits[0]);
         }
-        
+
         Metadata memory metadata_ = abi.decode(_read(METADATA_POINTER), (Metadata));
 
         Image memory image_ = abi.decode(
@@ -183,7 +183,7 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
                 )
             ),
             '",',
-            _getAttributes(data_, metadata_, image_.name, icon_.name),
+            _getAttributes(data_, metadata_, [image_.name, icon_.name]),
             "}"
         );
 
@@ -192,9 +192,9 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
 
     function generateSVGfromBytes(uint256 tokenId_) external view returns (string memory svg_) {
         MetadataBytes memory data_;
-        if(_revealed){
+        if (_revealed) {
             data_ = processMetadataAsBytes(_imageTraits[tokenId_]);
-        }else {
+        } else {
             data_ = processMetadataAsBytes(_sampleImageTraits[0]);
         }
 
@@ -346,19 +346,18 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
         return abi.encodePacked("<svg ", iconSize_, iconLocation_, "> ", path_, "</svg>");
     }
 
-    function _getAttributes(
-        MetadataBytes memory data_,
-        Metadata memory metadata_,
-        string memory imageName_,
-        string memory iconName_
-    ) internal pure returns (string memory) {
+    function _getAttributes(MetadataBytes memory data_, Metadata memory metadata_, string[2] memory names_)
+        internal
+        pure
+        returns (string memory)
+    {
         return (
             string(
                 abi.encodePacked(
                     ' "attributes" : [{ "trait_type": "Character", "value":"',
-                    imageName_,
+                    names_[0],
                     '" },  { "trait_type": "Icon", "value": "',
-                    iconName_,
+                    names_[1],
                     '"},  { "trait_type": "Background Color", "value": "',
                     metadata_.backgroundColors[data_.backgroundColors],
                     '" }, { "trait_type": "Initial Shadow Color", "value":"',

@@ -39,13 +39,12 @@ contract YakyukenTests is Test {
     string[] public txtLoc;
     Yakyuken.Icon[] public icn;
 
-    Yakyuken.Icon[] private _icons = new Yakyuken.Icon[](4);
+    Yakyuken.Icon[] private _iconStruct;
 
     error DifferentValueError(string vl1, string vl2, string loc);
 
     function setUp() external {
         _setUpArrays();
-
         _yakyuken = new Yakyuken(address(new ZLib()));
 
         // READ JSON CONFIG DATA
@@ -133,12 +132,19 @@ contract YakyukenTests is Test {
         // Icons
         bytes[] memory icons_ = new bytes[](4);
         uint128[] memory decompressedSizesIcons_ = new uint128[](4);
+        //Note: the compiler does not me let initialize the array with "new Yakyuken.Icon[](4)"
+        _iconStruct.push(Yakyuken.Icon("", "", ""));
+        _iconStruct.push(Yakyuken.Icon("", "", ""));
+        _iconStruct.push(Yakyuken.Icon("", "", ""));
+        _iconStruct.push(Yakyuken.Icon("", "", ""));
 
-        (icons_[0], decompressedSizesIcons_[0], _icons[0]) = _loadIcon("/svgPaths/icon/stars.svg", "stars", "yellow");
-        (icons_[1], decompressedSizesIcons_[1], _icons[1]) = _loadIcon("/svgPaths/icon/scribble.svg", "scribble", "red");
-        (icons_[2], decompressedSizesIcons_[2], _icons[2]) =
+        (icons_[0], decompressedSizesIcons_[0], _iconStruct[0]) =
+            _loadIcon("/svgPaths/icon/stars.svg", "stars", "yellow");
+        (icons_[1], decompressedSizesIcons_[1], _iconStruct[1]) =
+            _loadIcon("/svgPaths/icon/scribble.svg", "scribble", "red");
+        (icons_[2], decompressedSizesIcons_[2], _iconStruct[2]) =
             _loadIcon("/svgPaths/icon/abstract.svg", "abstract", "black");
-        (icons_[3], decompressedSizesIcons_[3], _icons[3]) =
+        (icons_[3], decompressedSizesIcons_[3], _iconStruct[3]) =
             _loadIcon("/svgPaths/icon/empty.svg", "none", "transparent");
 
         ByteRepresentation[] memory nftInBytes_;
@@ -201,7 +207,7 @@ contract YakyukenTests is Test {
         _compareValueTraitStruct(metadata_.yakFillColors, ykFillCol, "Yak Fill Colors");
         _compareValueTraitStruct(metadata_.yakHoverColors, ykHvCol, "Yak Hover Colors");
         _compareValueTraitStruct(metadata_.texts, txts, "Rock Paper Scissors");
-        _compareIconStruct(_icons, icn, "Icons");
+        _compareIconStruct(_iconStruct, icn, "Icons");
     }
 
     function test_process_bytes_info() external {
@@ -278,7 +284,7 @@ contract YakyukenTests is Test {
         _yakyuken.setSaleContract(vm.addr(1));
 
         vm.prank(vm.addr(1));
-        _yakyuken.mint(vm.addr(2), 0);
+        _yakyuken.mint(vm.addr(2), 30);
 
         assertEq(_yakyuken.balanceOf(vm.addr(2)), 1);
     }
@@ -344,8 +350,7 @@ contract YakyukenTests is Test {
         vm.writeFile(contractPathFile_, contractSvg_);
 
         // Fetch generated svg with the svg generator
-        string memory pythonPathFile_ =
-            string.concat("test/python-generated-svg/0.svg");
+        string memory pythonPathFile_ = string.concat("test/python-generated-svg/0.svg");
 
         // Prepare output to run script
         string[] memory inputs = new string[](4);
