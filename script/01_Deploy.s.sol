@@ -9,7 +9,7 @@ import { Strings } from "@openzeppelin/contracts/utils/Strings.sol";
 import { ZipUtils } from "../common/ZipUtils.sol";
 import { Yakyuken } from "../src/Yakyuken.sol";
 
-import { MezzanoteSale } from "lib/mezzanote-sale/src/MezzanoteSale.sol";
+import { MezzanotteSale } from "lib/mezzanote-sale/src/MezzanotteSale.sol";
 import { ZLib } from "../src/zip/ZLib.sol";
 
 contract Deploy is Script {
@@ -170,7 +170,11 @@ contract Deploy is Script {
         _yakyuken.initializeIcons(_icons, _decompressedSizesIcons);
 
         // Deploy MezzanoteSale contract
-        new MezzanoteSale(address(_yakyuken), SALE_START, WHITELIST_ROOT, WHITELIST_SALE_DURATION, PRICE);
+        address saleContract_ = address(new MezzanotteSale(address(_yakyuken), SALE_START, WHITELIST_ROOT, WHITELIST_SALE_DURATION, PRICE));
+
+        _yakyuken.setSaleContract(saleContract_);
+
+        //Yakyuken(0xAD908C887ee36A746De5A9496f3fB4053c6317F6).reveal(_infoArray);
 
         vm.stopBroadcast();
     }
