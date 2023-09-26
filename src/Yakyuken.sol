@@ -89,10 +89,6 @@ contract Yakyuken is ERC721B, ERC721URIStorage, Ownable {
 
     constructor(address zlib_) ERC721("Yakyuken", "YNFT") Ownable(msg.sender) {
         _zlib = zlib_;
-
-        for (uint256 i = 0; i < 25; i++) {
-            _mint(msg.sender, i);
-        }
     }
 
     ///@dev  must be the first initialize to be called
