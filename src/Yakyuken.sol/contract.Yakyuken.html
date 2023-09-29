@@ -3,8 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Foundry Template</title>
-        <meta name="robots" content="noindex" />
+        <title>Yakyuken - Foundry Template</title>
 
 
         <!-- Custom HTML head -->
@@ -13,31 +12,31 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff" />
 
-        <link rel="icon" href="favicon.svg">
-        <link rel="shortcut icon" href="favicon.png">
-        <link rel="stylesheet" href="css/variables.css">
-        <link rel="stylesheet" href="css/general.css">
-        <link rel="stylesheet" href="css/chrome.css">
-        <link rel="stylesheet" href="css/print.css" media="print">
+        <link rel="icon" href="../../favicon.svg">
+        <link rel="shortcut icon" href="../../favicon.png">
+        <link rel="stylesheet" href="../../css/variables.css">
+        <link rel="stylesheet" href="../../css/general.css">
+        <link rel="stylesheet" href="../../css/chrome.css">
+        <link rel="stylesheet" href="../../css/print.css" media="print">
 
         <!-- Fonts -->
-        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
-        <link rel="stylesheet" href="fonts/fonts.css">
+        <link rel="stylesheet" href="../../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../../fonts/fonts.css">
 
         <!-- Highlight.js Stylesheets -->
-        <link rel="stylesheet" href="highlight.css">
-        <link rel="stylesheet" href="tomorrow-night.css">
-        <link rel="stylesheet" href="ayu-highlight.css">
+        <link rel="stylesheet" href="../../highlight.css">
+        <link rel="stylesheet" href="../../tomorrow-night.css">
+        <link rel="stylesheet" href="../../ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
-        <link rel="stylesheet" href="book.css">
+        <link rel="stylesheet" href="../../book.css">
 
     </head>
     <body>
     <div id="body-container">
         <!-- Provide site root to javascript -->
         <script>
-            var path_to_root = "";
+            var path_to_root = "../../";
             var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
         </script>
 
@@ -85,7 +84,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item "><a href="index.html">Home</a></li><li class="chapter-item affix "><li class="part-title">src</li><li class="chapter-item "><a href="src/zip/index.html">❱ zip</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="src/zip/ZLib.sol/contract.ZLib.html">ZLib</a></li></ol></li><li class="chapter-item "><a href="src/ERC721B.sol/contract.ERC721B.html">ERC721B</a></li><li class="chapter-item "><a href="src/Yakyuken.sol/contract.Yakyuken.html">Yakyuken</a></li></ol>
+                <ol class="chapter"><li class="chapter-item "><a href="../../index.html">Home</a></li><li class="chapter-item affix "><li class="part-title">src</li><li class="chapter-item "><a href="../../src/zip/index.html">❱ zip</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../src/zip/ZLib.sol/contract.ZLib.html">ZLib</a></li></ol></li><li class="chapter-item "><a href="../../src/ERC721B.sol/contract.ERC721B.html">ERC721B</a></li><li class="chapter-item expanded "><a href="../../src/Yakyuken.sol/contract.Yakyuken.html" class="active">Yakyuken</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -139,7 +138,7 @@
                     <h1 class="menu-title">Foundry Template</h1>
 
                     <div class="right-buttons">
-                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
                         </a>
                         <a href="https://github.com/threesigmaxyz/mezzanote" title="Git repository" aria-label="Git repository">
@@ -171,184 +170,11 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="mezzanotte-yakyuken-benchmarks"><a class="header" href="#mezzanotte-yakyuken-benchmarks">Mezzanotte Yakyuken Benchmarks <a href="https://github.com/threesigmaxyz/foundry-template/actions"><img src="https://github.com/threesigmaxyz/foundry-template/actions/workflows/ci.yml/badge.svg" alt="Github Actions" /></a> <a href="https://getfoundry.sh/"><img src="https://img.shields.io/badge/Built%20with-Foundry-FFDB1C.svg" alt="Foundry" /></a> <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT" /></a></a></h1>
-<p>A Proof of Concept for on chain nfts.</p>
-<p>Gas costs estimation</p>
-<div class="table-wrapper"><table><thead><tr><th style="text-align: center">svg</th><th style="text-align: center">size</th><th style="text-align: center">gas cost ETH per 10 gwei of gas price</th></tr></thead><tbody>
-<tr><td style="text-align: center">contract</td><td style="text-align: center">-</td><td style="text-align: center">0.074</td></tr>
-<tr><td style="text-align: center">ami</td><td style="text-align: center">5.81 kB</td><td style="text-align: center">0.013</td></tr>
-<tr><td style="text-align: center">christine</td><td style="text-align: center">4.61 kB</td><td style="text-align: center">0.010</td></tr>
-<tr><td style="text-align: center">takechi</td><td style="text-align: center">17.4 kB</td><td style="text-align: center">0.038</td></tr>
-<tr><td style="text-align: center">tennis</td><td style="text-align: center">47.2 kB</td><td style="text-align: center">0.110</td></tr>
-<tr><td style="text-align: center">yak</td><td style="text-align: center">5.20 kB</td><td style="text-align: center">0.012</td></tr>
-<tr><td style="text-align: center">total</td><td style="text-align: center">-</td><td style="text-align: center">0.257</td></tr>
-</tbody></table>
-</div>
-<p>Considering a gas cost of 70 gwei / gas (current price)</p>
-<div class="table-wrapper"><table><thead><tr><th style="text-align: center">svg</th><th style="text-align: center">size</th><th style="text-align: center">gas cost ETH per 70 gwei of gas price</th></tr></thead><tbody>
-<tr><td style="text-align: center">contract</td><td style="text-align: center">-</td><td style="text-align: center">0.518</td></tr>
-<tr><td style="text-align: center">ami</td><td style="text-align: center">5.81 kB</td><td style="text-align: center">0.091</td></tr>
-<tr><td style="text-align: center">christine</td><td style="text-align: center">4.61 kB</td><td style="text-align: center">0.070</td></tr>
-<tr><td style="text-align: center">takechi</td><td style="text-align: center">17.4 kB</td><td style="text-align: center">0.266</td></tr>
-<tr><td style="text-align: center">tennis</td><td style="text-align: center">47.2 kB</td><td style="text-align: center">0.770</td></tr>
-<tr><td style="text-align: center">yak</td><td style="text-align: center">5.20 kB</td><td style="text-align: center">0.084</td></tr>
-<tr><td style="text-align: center">total</td><td style="text-align: center">-</td><td style="text-align: center">1.799</td></tr>
-</tbody></table>
-</div>
-<h2 id="getting-started"><a class="header" href="#getting-started">Getting Started</a></h2>
-<pre><code class="language-sh">git clone git@github.com:threesigmaxyz/mezzanotte-yakyuken-benchmarks.git
-cd mezzanotte-yakyuken-benchmarks
-make update
-make install
-</code></pre>
-<h2 id="usage"><a class="header" href="#usage">Usage</a></h2>
-<h3 id="generate-all-svg-combinations"><a class="header" href="#generate-all-svg-combinations">Generate all svg combinations</a></h3>
-<pre><code>node svg-generator.js
-</code></pre>
-<p>Files will be inside <code>generatedSVGs</code>.</p>
-<h3 id="generate-all-svg-combinations-to-html-files"><a class="header" href="#generate-all-svg-combinations-to-html-files">Generate all svg combinations to html files</a></h3>
-<pre><code>node html-generator.js
-</code></pre>
-<p>Files will be inside <code>generatedHTMLs</code>.</p>
-<h3 id="generate-tokenuris"><a class="header" href="#generate-tokenuris">Generate tokenURIs</a></h3>
-<pre><code>make tests
-</code></pre>
-<p>TokenURIs will be inside <code>generatedTokenURIs</code>. Copy the text in a tokenURI file into a browser, it should be a regular NFT.</p>
-<h1 id="about-us"><a class="header" href="#about-us">About Us</a></h1>
-<p><a href="https://threesigma.xyz/">Three Sigma</a> is a venture builder firm focused on blockchain engineering, research, and investment. Our mission is to advance the adoption of blockchain technology and contribute towards the healthy development of the Web3 space.</p>
-<p>If you are interested in joining our team, please contact us <a href="mailto:info@threesigma.xyz">here</a>.</p>
-<hr />
-<p align="center">
-  <img src="https://threesigma.xyz/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fthree-sigma-labs-research-capital-white.0f8e8f50.png&w=2048&q=75" width="75%" />
-</p>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="contents"><a class="header" href="#contents">Contents</a></h1>
-<ul>
-<li><a href="src/zip/ZLib.sol/contract.ZLib.html">ZLib</a></li>
-</ul>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="zlib"><a class="header" href="#zlib">ZLib</a></h1>
-<p><a href="https://github.com/threesigmaxyz/mezzanote/blob/fb1408d36c26dfcd4c490a571e777281119eff44/src/zip/ZLib.sol">Git Source</a></p>
-<p><strong>Authors:</strong>
-Zipped Contracts (https://github.com/merklejerk/zipped-contracts), @adlerjohn (https://github.com/adlerjohn/inflate-sol) (original)</p>
-<p>Solidity implementation of zlib deflate.</p>
-<p><em>Optimistic form of:
-https://github.com/adlerjohn/inflate-sol/blob/2a88141f5226da9d0252be4a456a2e0b23ba3d0e/contracts/InflateLib.sol</em></p>
-<h2 id="state-variables"><a class="header" href="#state-variables">State Variables</a></h2>
-<h3 id="maxbits"><a class="header" href="#maxbits">MAXBITS</a></h3>
-<pre><code class="language-solidity">uint256 constant MAXBITS = 15;
-</code></pre>
-<h3 id="maxlcodes"><a class="header" href="#maxlcodes">MAXLCODES</a></h3>
-<pre><code class="language-solidity">uint256 constant MAXLCODES = 286;
-</code></pre>
-<h3 id="maxdcodes"><a class="header" href="#maxdcodes">MAXDCODES</a></h3>
-<pre><code class="language-solidity">uint256 constant MAXDCODES = 30;
-</code></pre>
-<h3 id="maxcodes"><a class="header" href="#maxcodes">MAXCODES</a></h3>
-<pre><code class="language-solidity">uint256 constant MAXCODES = (MAXLCODES + MAXDCODES);
-</code></pre>
-<h3 id="fixlcodes"><a class="header" href="#fixlcodes">FIXLCODES</a></h3>
-<pre><code class="language-solidity">uint256 constant FIXLCODES = 288;
-</code></pre>
-<h2 id="functions"><a class="header" href="#functions">Functions</a></h2>
-<h3 id="_readinputbyte"><a class="header" href="#_readinputbyte">_readInputByte</a></h3>
-<pre><code class="language-solidity">function _readInputByte(uint256 i) private pure returns (uint8 b);
-</code></pre>
-<h3 id="_bits"><a class="header" href="#_bits">_bits</a></h3>
-<pre><code class="language-solidity">function _bits(State memory s, uint256 need) private pure returns (uint256 ret);
-</code></pre>
-<h3 id="_stored"><a class="header" href="#_stored">_stored</a></h3>
-<pre><code class="language-solidity">function _stored(State memory s) private pure;
-</code></pre>
-<h3 id="_decode"><a class="header" href="#_decode">_decode</a></h3>
-<pre><code class="language-solidity">function _decode(State memory s, Huffman memory h) private pure returns (uint256);
-</code></pre>
-<h3 id="_construct"><a class="header" href="#_construct">_construct</a></h3>
-<pre><code class="language-solidity">function _construct(Huffman memory h, uint256[] memory lengths, uint256 n, uint256 start) private pure;
-</code></pre>
-<h3 id="_codes"><a class="header" href="#_codes">_codes</a></h3>
-<pre><code class="language-solidity">function _codes(State memory s, Huffman memory lencode, Huffman memory distcode) private pure;
-</code></pre>
-<h3 id="_build_fixed"><a class="header" href="#_build_fixed">_build_fixed</a></h3>
-<pre><code class="language-solidity">function _build_fixed(State memory s) private pure;
-</code></pre>
-<h3 id="_fixed"><a class="header" href="#_fixed">_fixed</a></h3>
-<pre><code class="language-solidity">function _fixed(State memory s) private pure;
-</code></pre>
-<h3 id="_build_dynamic_lengths"><a class="header" href="#_build_dynamic_lengths">_build_dynamic_lengths</a></h3>
-<pre><code class="language-solidity">function _build_dynamic_lengths(State memory s) private pure returns (uint256[] memory);
-</code></pre>
-<h3 id="_build_dynamic"><a class="header" href="#_build_dynamic">_build_dynamic</a></h3>
-<pre><code class="language-solidity">function _build_dynamic(State memory s) private pure returns (Huffman memory, Huffman memory);
-</code></pre>
-<h3 id="_dynamic"><a class="header" href="#_dynamic">_dynamic</a></h3>
-<pre><code class="language-solidity">function _dynamic(State memory s) private pure;
-</code></pre>
-<h3 id="inflate"><a class="header" href="#inflate">inflate</a></h3>
-<pre><code class="language-solidity">function inflate(bytes calldata, uint256 outputSize) external pure returns (bytes memory);
-</code></pre>
-<h3 id="inflatefrom"><a class="header" href="#inflatefrom">inflateFrom</a></h3>
-<pre><code class="language-solidity">function inflateFrom(address dataAddr, uint256 dataOffset, uint256 dataSize, uint256 outputSize)
-    external
-    view
-    returns (bytes memory);
-</code></pre>
-<h2 id="errors"><a class="header" href="#errors">Errors</a></h2>
-<h3 id="invalidblocktypeerror"><a class="header" href="#invalidblocktypeerror">InvalidBlockTypeError</a></h3>
-<pre><code class="language-solidity">error InvalidBlockTypeError();
-</code></pre>
-<h3 id="invalidlengthordistancecodeerror"><a class="header" href="#invalidlengthordistancecodeerror">InvalidLengthOrDistanceCodeError</a></h3>
-<pre><code class="language-solidity">error InvalidLengthOrDistanceCodeError();
-</code></pre>
-<h2 id="structs"><a class="header" href="#structs">Structs</a></h2>
-<h3 id="state"><a class="header" href="#state">State</a></h3>
-<pre><code class="language-solidity">struct State {
-    bytes output;
-    uint256 outcnt;
-    uint256 incnt;
-    uint256 bitbuf;
-    uint256 bitcnt;
-    uint256[] tmpDynamicLengths;
-    Huffman tmpLencode;
-    Huffman tmpDistcode;
-    Huffman fixedLencode;
-    Huffman fixedDistcode;
-    uint16[29] CODES_LENS;
-    uint8[29] CODES_LEXT;
-    uint16[30] CODES_DISTS;
-    uint8[30] CODES_DEXTS;
-    uint8[19] BUILD_DYNAMIC_LENGTHS_ORDER;
-}
-</code></pre>
-<h3 id="huffman"><a class="header" href="#huffman">Huffman</a></h3>
-<pre><code class="language-solidity">struct Huffman {
-    uint256[] counts;
-    uint256[] symbols;
-}
-</code></pre>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="erc721b"><a class="header" href="#erc721b">ERC721B</a></h1>
-<p><a href="https://github.com/threesigmaxyz/mezzanote/blob/fb1408d36c26dfcd4c490a571e777281119eff44/src/ERC721B.sol">Git Source</a></p>
-<h2 id="state-variables-1"><a class="header" href="#state-variables-1">State Variables</a></h2>
-<h3 id="max_storage"><a class="header" href="#max_storage">MAX_STORAGE</a></h3>
-<pre><code class="language-solidity">uint256 constant MAX_STORAGE = 24_576 - 1;
-</code></pre>
-<h3 id="_data"><a class="header" href="#_data">_data</a></h3>
-<pre><code class="language-solidity">mapping(bytes32 =&gt; address[]) _data;
-</code></pre>
-<h2 id="functions-1"><a class="header" href="#functions-1">Functions</a></h2>
-<h3 id="_write"><a class="header" href="#_write">_write</a></h3>
-<pre><code class="language-solidity">function _write(bytes32 id_, bytes calldata data_) internal;
-</code></pre>
-<h3 id="_read"><a class="header" href="#_read">_read</a></h3>
-<pre><code class="language-solidity">function _read(bytes32 id_) internal view returns (bytes memory data_);
-</code></pre>
-<h2 id="errors-1"><a class="header" href="#errors-1">Errors</a></h2>
-<h3 id="writeconflicerror"><a class="header" href="#writeconflicerror">WriteConflicError</a></h3>
-<pre><code class="language-solidity">error WriteConflicError(bytes32 id_);
-</code></pre>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="yakyuken"><a class="header" href="#yakyuken">Yakyuken</a></h1>
+                        <h1 id="yakyuken"><a class="header" href="#yakyuken">Yakyuken</a></h1>
 <p><a href="https://github.com/threesigmaxyz/mezzanote/blob/fb1408d36c26dfcd4c490a571e777281119eff44/src/Yakyuken.sol">Git Source</a></p>
 <p><strong>Inherits:</strong>
-<a href="src/Yakyuken.sol//src/ERC721B.sol/contract.ERC721B.html">ERC721B</a>, ERC721URIStorage, Ownable</p>
-<h2 id="state-variables-2"><a class="header" href="#state-variables-2">State Variables</a></h2>
+<a href="/src/ERC721B.sol/contract.ERC721B.html">ERC721B</a>, ERC721URIStorage, Ownable</p>
+<h2 id="state-variables"><a class="header" href="#state-variables">State Variables</a></h2>
 <h3 id="metadata_pointer"><a class="header" href="#metadata_pointer">METADATA_POINTER</a></h3>
 <pre><code class="language-solidity">bytes32 private constant METADATA_POINTER = bytes32(keccak256(&quot;metadata&quot;));
 </code></pre>
@@ -376,7 +202,7 @@ https://github.com/adlerjohn/inflate-sol/blob/2a88141f5226da9d0252be4a456a2e0b23
 <h3 id="_salecontract"><a class="header" href="#_salecontract">_saleContract</a></h3>
 <pre><code class="language-solidity">address private _saleContract;
 </code></pre>
-<h2 id="functions-2"><a class="header" href="#functions-2">Functions</a></h2>
+<h2 id="functions"><a class="header" href="#functions">Functions</a></h2>
 <h3 id="initialize"><a class="header" href="#initialize">initialize</a></h3>
 <pre><code class="language-solidity">modifier initialize(uint256 id_);
 </code></pre>
@@ -469,7 +295,7 @@ https://github.com/adlerjohn/inflate-sol/blob/2a88141f5226da9d0252be4a456a2e0b23
     pure
     returns (string memory);
 </code></pre>
-<h2 id="errors-2"><a class="header" href="#errors-2">Errors</a></h2>
+<h2 id="errors"><a class="header" href="#errors">Errors</a></h2>
 <h3 id="outofbondstraitvalueerror"><a class="header" href="#outofbondstraitvalueerror">OutOfBondsTraitValueError</a></h3>
 <pre><code class="language-solidity">error OutOfBondsTraitValueError();
 </code></pre>
@@ -479,7 +305,7 @@ https://github.com/adlerjohn/inflate-sol/blob/2a88141f5226da9d0252be4a456a2e0b23
 <h3 id="notsalecontracterror"><a class="header" href="#notsalecontracterror">NotSaleContractError</a></h3>
 <pre><code class="language-solidity">error NotSaleContractError();
 </code></pre>
-<h2 id="structs-1"><a class="header" href="#structs-1">Structs</a></h2>
+<h2 id="structs"><a class="header" href="#structs">Structs</a></h2>
 <h3 id="image"><a class="header" href="#image">Image</a></h3>
 <pre><code class="language-solidity">struct Image {
     string path;
@@ -533,6 +359,9 @@ https://github.com/adlerjohn/inflate-sol/blob/2a88141f5226da9d0252be4a456a2e0b23
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../src/ERC721B.sol/contract.ERC721B.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
 
 
                         <div style="clear: both"></div>
@@ -541,6 +370,9 @@ https://github.com/adlerjohn/inflate-sol/blob/2a88141f5226da9d0252be4a456a2e0b23
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../src/ERC721B.sol/contract.ERC721B.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
 
             </nav>
 
@@ -554,22 +386,17 @@ https://github.com/adlerjohn/inflate-sol/blob/2a88141f5226da9d0252be4a456a2e0b23
         </script>
 
 
-        <script src="elasticlunr.min.js"></script>
-        <script src="mark.min.js"></script>
-        <script src="searcher.js"></script>
+        <script src="../../elasticlunr.min.js"></script>
+        <script src="../../mark.min.js"></script>
+        <script src="../../searcher.js"></script>
 
-        <script src="clipboard.min.js"></script>
-        <script src="highlight.js"></script>
-        <script src="book.js"></script>
+        <script src="../../clipboard.min.js"></script>
+        <script src="../../highlight.js"></script>
+        <script src="../../book.js"></script>
 
         <!-- Custom JS scripts -->
-        <script src="solidity.min.js"></script>
+        <script src="../../solidity.min.js"></script>
 
-        <script>
-        window.addEventListener('load', function() {
-            window.setTimeout(window.print, 100);
-        });
-        </script>
 
     </div>
     </body>
