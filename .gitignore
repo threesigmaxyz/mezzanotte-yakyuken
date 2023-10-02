@@ -11,3 +11,6 @@ docs/
 *.log
 .DS_Store
 lcov.info
+test/svgTest.svgTest
+test/tokenURI1
+test/python-generated-svg

@@ -6,3 +6,18 @@
 	path = lib/openzeppelin-contracts
 	url = https://github.com/openzeppelin/openzeppelin-contracts
 	branch = master
+[submodule "lib/solmate"]
+	path = lib/solmate
+	url = https://github.com/transmissions11/solmate
+[submodule "lib/Base64.sol"]
+	path = lib/Base64.sol
+	url = https://github.com/BlockChainCaffe/Base64.sol
+[submodule "lib/mezzanotte-yakyuken-generator"]
+	path = lib/mezzanotte-yakyuken-generator
+	url = https://github.com/threesigmaxyz/mezzanotte-yakyuken-generator
+[submodule "lib/mezzanote-sale"]
+	path = lib/mezzanote-sale
+	url = https://github.com/threesigmaxyz/mezzanote-sale
+[submodule "lib/zipped-contracts"]
+	path = lib/zipped-contracts
+	url = https://github.com/merklejerk/zipped-contracts
