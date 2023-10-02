@@ -51,7 +51,7 @@ documentation :;
 
 # Deploy a local blockchain
 anvil :;
-	@anvil -m 'test test test test test test test test test test test junk' -f 
+	@anvil -m 'test test test test test test test test test test test junk' 
 
 # This is the private key of account from the mnemonic from the "make anvil" command
 deploy-anvil :;
