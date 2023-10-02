@@ -13,8 +13,8 @@ An implementation for on-chain NFTs
 ## Getting Started
 
 ```sh
-git clone git@github.com:threesigmaxyz/mezzanotte-yakyuken-benchmarks.git
-cd mezzanotte-yakyuken-benchmarks
+git clone git@github.com:threesigmaxyz/mezzanotte-yakyuken.git
+cd mezzanotte-yakyuken
 make update
 make install
 ```
